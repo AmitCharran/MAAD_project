@@ -42,16 +42,25 @@ As a user, I can:
 ## Roles
 ### Git flow manager - Branch management
 - Donald
-https://github.com/210726-Enterprise/MAAD_project
+- [ ] https://github.com/210726-Enterprise/MAAD_project
+- [ ] Keep github pristine as possible
+- [ ] Solve merge conflicts
+- [ ] Keep everyone on their branches
 ### Dev-Op engineer - AWS management
 - Amit
-RDBMS will be deployed to the cloud (AWS RDS)
-Java API will be deployed to the cloud (AWS EC2)
-UI application will be deployed to the cloud (AWS S3)
+- [ ] RDBMS will be deployed to the cloud (AWS RDS)
+- [ ] Java API will be deployed to the cloud (AWS EC2)
+- [ ] UI application will be deployed to the cloud (AWS S3)
+- [ ] Report on deployment health
 ### Scrum Master
 - Alex
+- [ ] Manage day to day
+- [ ] Conduct Stand-ups each day
+- [ ] Keep everything on time
+- [ ] Dissolve impediments
 ### Testing/Documentation - *possible use of swagger
 - Minh
-Java API will have >=80% test coverage for service layer
-Java API will leverage Spring's MockMvc for integration/e2e tests of controller endpoints
-Java API will be adequately documented (Java Docs and web endpoint documentation [Swagger/OpenAPI])
+- [ ] Java API will have >=80% test coverage for service layer
+- [ ] Java API will leverage Spring's MockMvc for integration/e2e tests of controller endpoints
+- [ ] Java API will be adequately documented (Java Docs and web endpoint documentation [Swagger/OpenAPI])
+- [ ] Make sure people are writing their testing and documentation on their code (No merge without tests and docs)
