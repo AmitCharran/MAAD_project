@@ -15,8 +15,39 @@ As a user, I can:
 - [ ] choose which bid wins my car.
 - [ ] transfer ownership of my vehicle without the need of sale on the application.
 - [ ] remove vehicle from my current vehicles list.
+### Front-end
+As a user, I can:
+- [ ] Access a page on the website to register a new account
+- [ ] Access a page on the website to login to my account.
+- [ ] While logged in, fill out a form to register at least one vehicle.
+- [ ] While logged in, fill out a form to edit the description of my vehicle.
+- [ ] While logged in, report my vehicle as stolen.
+- [ ] While logged in, mark a vehicle as being for sale.
+- [ ] Anyone can view for sale vehicles.
+- [ ] Anyone can view a vehicle's history if vehicle is for sale .
+- [ ] While logged in, make a bid on a vehicle on sale.
+- [ ] While logged in, choose which bid wins my car.
+- [ ] While logged in, transfer ownership of my vehicle without the need of sale on the application.
+- [ ] While logged in, remove vehicle from my current vehicles list.
+### Back-end
+As a user, I can:
+- [ ] intake user credentials, encrypt them, and send them to the database
+- [ ] compare inputted credentials to database to find a match, and if a match is found, return user information.
+- [ ] intake user vehicle information and persist it to our database
+  - [ ] While user inputs each general descriptor of vehicle (make, model), query 3rd party api to get all available models for a given make, and all available years for a given model
+- [ ] update information of vehicle in database with the new information.
+- [ ] change column in vehicle table to mark vehicle as stolen.
+- [ ] change column in vehicle table to mark vehicle as for sale and add appropriate information to the Sale table in the database.
+  - [ ] prompt user to update information for vehicle
+- [ ] retrieve vehicle field information based on sale_id when user wants to view information about a vehicle on sale
+- [ ] take user input for a bid and persist it to the bid table.
+- [ ] send all bid information for a given to vehicle owner for them to view and choose a buyer (user_id -> vehicle_id -> sale_id -> bid information)
+- [ ] user inputs a new username for a given vehicle_id that is updates on the vehicle table.
+- [ ] delete vehicle from my vehicles table given vehicle_id that corresponds to the same user_id.
 ## Possible Stretch Goals
 As a user, I can:
+- [ ] Create archive tables for the Vehicle, Sale, Bid tables
+- [ ] Allow transfer recipients to accept or decline the transfer of onwership of a vehicle.
 - [ ] report sightings of stolen vehicles
 ## Minimum Features
 - [ ] Basic validation
