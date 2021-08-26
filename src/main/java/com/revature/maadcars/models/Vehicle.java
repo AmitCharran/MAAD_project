@@ -5,7 +5,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
+/**
+ * Foreign keys:
+ * - Many to one: users
+ * - Many to one: models
+ * - One to many: sales
+ */
 @Entity
 @Table(name="vehicles")
 @Getter @Setter
@@ -17,8 +24,15 @@ public class Vehicle {
     private int vehicle_id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "model_id", referencedColumnName = "model_id", nullable = false)
+    private Model model;
+
+    @OneToMany(mappedBy = "sale")
+    private List<Sale> sales;
 
     @Column(name = "vin", unique = true, nullable = false)
     private String vin;
@@ -26,9 +40,9 @@ public class Vehicle {
     @Column(name = "color")
     private String color;
 
-    @Column(name = "isStolen")
-    private boolean isStolen;
+    @Column(name = "is_stolen", columnDefinition = "boolean not null default false")
+    private boolean is_stolen;
 
-    @Column(name = "description")
-    private String description;
+    //@Column(name = "description")
+    //private String description;
 }
