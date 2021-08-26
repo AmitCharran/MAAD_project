@@ -7,6 +7,10 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.List;
 
+/**
+ * Foreign keys:
+ * - One to many: vehicles
+ */
 @Entity
 @Table(name="users")
 @Getter @Setter
