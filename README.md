@@ -40,17 +40,17 @@ As a user, I can:
 - [ ] Presentation date: September 10th, 2021
 
 ## Roles
-# Git flow manager - Branch management
+### Git flow manager - Branch management
 - Donald
 https://github.com/210726-Enterprise/MAAD_project
-# Dev-Op engineer - AWS management
+### Dev-Op engineer - AWS management
 - Amit
 RDBMS will be deployed to the cloud (AWS RDS)
 Java API will be deployed to the cloud (AWS EC2)
 UI application will be deployed to the cloud (AWS S3)
-# Scrum Master
+### Scrum Master
 - Alex
-# Testing/Documentation - *possible use of swagger
+### Testing/Documentation - *possible use of swagger
 - Minh
 Java API will have >=80% test coverage for service layer
 Java API will leverage Spring's MockMvc for integration/e2e tests of controller endpoints
