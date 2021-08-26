@@ -58,7 +58,7 @@ As a user, I can:
 - [ ] Conduct Stand-ups each day
 - [ ] Keep everything on time
 - [ ] Dissolve impediments
-### Testing/Documentation - *possible use of swagger
+### Testing/Documentation
 - Minh
 - [ ] Java API will have >=80% test coverage for service layer
 - [ ] Java API will leverage Spring's MockMvc for integration/e2e tests of controller endpoints
