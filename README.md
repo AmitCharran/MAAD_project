@@ -73,7 +73,7 @@ As a user, I can:
 ## Roles
 ### Git flow manager - Branch management
 - Donald
-- [ ] https://github.com/210726-Enterprise/MAAD_project
+- [ ] https://github.com/AmitCharran/MAAD_project
 - [ ] Keep github pristine as possible
 - [ ] Solve merge conflicts
 - [ ] Keep everyone on their branches
