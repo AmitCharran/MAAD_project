@@ -1,5 +1,7 @@
 HELP.md
-target/
+target/*
+!target/*.war
+!target/maadcars-0.0.1-SNAPSHOT.war.original
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
