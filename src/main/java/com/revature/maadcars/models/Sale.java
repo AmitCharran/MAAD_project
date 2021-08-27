@@ -27,7 +27,7 @@ public class Sale {
     @JoinColumn(name = "vehicle_id", referencedColumnName = "vehicle_id")
     private Vehicle vehicle;
 
-    @OneToMany(mappedBy = "bid")
+    @OneToMany(mappedBy = "sale")
     private List<Bid> bids;
 
     @Column(name = "time_started")

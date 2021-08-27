@@ -27,7 +27,7 @@ public class Make {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int make_id;
 
-    @OneToMany(mappedBy = "model")
+    @OneToMany(mappedBy = "make")
     private List<Model> models;
 
     @Column(name = "name", nullable = false)

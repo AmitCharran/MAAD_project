@@ -31,7 +31,7 @@ public class Vehicle {
     @JoinColumn(name = "model_id", referencedColumnName = "model_id", nullable = false)
     private Model model;
 
-    @OneToMany(mappedBy = "sale")
+    @OneToMany(mappedBy = "vehicle")
     private List<Sale> sales;
 
     @Column(name = "vin", unique = true, nullable = false)
