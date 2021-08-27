@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * Foreign keys:
- * - One to many: vehicles
+ * - One to many: One user, many vehicles
  */
 @Entity
 @Table(name="users")
