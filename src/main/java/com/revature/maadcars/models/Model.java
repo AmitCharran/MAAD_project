@@ -27,7 +27,7 @@ public class Model {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int model_id;
 
-    @OneToMany(mappedBy = "vehicle")
+    @OneToMany(mappedBy = "model")
     private List<Vehicle> vehicles;
 
     @ManyToOne
