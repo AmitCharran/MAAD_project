@@ -8,6 +8,8 @@ phases:
     post_build:
       commands:
         - echo Build completed successfully
+        - mvn package
+        - mv target/maadcars*./
     artifacts:
       files:
         target/maadcars*/*
