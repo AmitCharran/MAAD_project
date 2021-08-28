@@ -9,7 +9,7 @@ phases:
       commands:
         - echo Build completed successfully
         - mvn package
-        - mv target/maadcars*./
+        - mv target/maadcars* ./
     artifacts:
       files:
         target/maadcars*/*
