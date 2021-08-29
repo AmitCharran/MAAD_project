@@ -9,6 +9,6 @@ phases:
       commands:
         - echo Build completed successfully
     artifacts:
-        files:
-          target/maadcars*/*
+       files:
+         target/maadcars*/*
       discard-paths: yes
