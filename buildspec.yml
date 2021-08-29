@@ -1,13 +1,18 @@
 
 version: 0.1
 phases:
+  install:
+    runtime-versions:
+      java: corretto11
   build:
     commands:
       - echo Entered the build phase
       - echo Build started on `date`
-      - mvn clean package
+      - mv target/maadcars*.war maadcars*.war
     post_build:
       commands:
+        - mvn package
+        - mv target/maadcars*.war maadcars*.war
         - echo Build completed successfully
     artifacts:
       files:
