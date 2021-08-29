@@ -11,6 +11,6 @@ phases:
         - mvn package
         - mv target/maadcars* ./
     artifacts:
-      files:
-        build/**/*
+        files:
+          target/maadcars*/*
       discard-paths: yes
