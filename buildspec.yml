@@ -8,6 +8,7 @@ phases:
     commands:
       - echo Entered the build phase
       - echo Build started on `date`
+      - mvn clean
     post_build:
       commands:
         - mvn package
