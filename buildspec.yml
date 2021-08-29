@@ -8,7 +8,6 @@ phases:
     commands:
       - echo Entered the build phase
       - echo Build started on `date`
-      - mv target/maadcars*.war maadcars*.war
     post_build:
       commands:
         - mvn package
