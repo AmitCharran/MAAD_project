@@ -12,5 +12,5 @@ phases:
         - mv target/maadcars* ./
     artifacts:
       files:
-        target/maadcars*/*
+        build/**/*
       discard-paths: yes
