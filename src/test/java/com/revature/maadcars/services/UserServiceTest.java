@@ -1,13 +1,13 @@
-package com.revature.maadcars.controllers;
+package com.revature.maadcars.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.maadcars.controllers.UserController;
 import com.revature.maadcars.models.User;
 import com.revature.maadcars.repository.UserRepository;
-import com.revature.maadcars.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,8 +18,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -28,14 +30,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class UserControllerTest {
-
-
-    private MockMvc mockMvc;
-    @Autowired
-    private UserController userController;
-
+class UserServiceTest {
     @MockBean
+    private UserController userController;
+    @MockBean
+    private UserRepository userRepository;
     private UserService userService;
 
     private List<User> userList;
@@ -44,7 +43,9 @@ class UserControllerTest {
 
     @BeforeEach
     void setup(){
-        mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
+        userRepository = Mockito.mock(UserRepository.class);
+        userController = Mockito.mock(UserController.class);
+        userService = new UserService(userRepository);
 
         user = new User();
         user.setUser_id(1);
@@ -58,17 +59,27 @@ class UserControllerTest {
 
     @Test
     void saveUserToDatabase() throws Exception {
-        when(userService.saveUser(any(User.class))).thenReturn(user);
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+        when(userRepository.save(user)).thenReturn(user);
+        userService.saveUser(user);
+        assertEquals(user, userService.saveUser(user));
 
-        mockMvc.perform(post("/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(user)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").exists())
-                .andExpect(jsonPath("$.user_id").value(1))
-                .andExpect(jsonPath("$.username").value("test_user1"))
-                .andExpect(jsonPath("$.password").value("password"))
-                .andReturn();
     }
+
+    @Test
+    void SaveUserToDatabaseButUserNameAlreadyTaken() throws Exception{
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
+        userService.saveUser(user);
+        assertEquals(user, userService.saveUser(user));
+    }
+
+    @Test
+    void SaveUserToDatabseButUserPasswordTooShortOrTooLong(){
+        user.setPassword("l");
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+        userService.saveUser(user);
+        assertEquals(user, userService.saveUser(user));
+    }
+
 
 }
