@@ -16,5 +16,5 @@ phases:
         - echo Build completed successfully
     artifacts:
       files:
-        'maadcars-0.0.1-SNAPSHOT.war'
+        'target/maadcars-0.0.1-SNAPSHOT.war'
       discard-paths: yes
