@@ -11,7 +11,7 @@ phases:
     post_build:
       commands:
         - mvn package
-        - mv target/maadcars*.war maadcars.war 
+        - mv target/maadcars-0.0.1-SNAPSHOT.war maadcars.war 
         - echo Build completed successfully
     artifacts:
       files:
