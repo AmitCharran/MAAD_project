@@ -1,5 +1,7 @@
 package com.revature.maadcars.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.maadcars.models.User;
 import com.revature.maadcars.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.*;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Controller implementation for the User Entity.
@@ -63,10 +67,21 @@ public class UserController {
      * @param u User object interpreted from request body.
      * @return Persisted User.
      */
+    @ExceptionHandler(ConstraintViolationException.class)
     @PostMapping
     public @ResponseBody
-    User createUser(@RequestBody User u){
-        return userService.saveUser(u);
+    ResponseEntity<String> createUser(@Valid @RequestBody User u) throws JsonProcessingException {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+
+        Set<ConstraintViolation<User>> violations = validator.validate(u);
+        for (ConstraintViolation<User> violation : violations) {
+
+
+            return ResponseEntity.badRequest().body(new ObjectMapper().writeValueAsString("Error"));
+        }
+
+        return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(userService.saveUser(u)));
     }
 
     /**
