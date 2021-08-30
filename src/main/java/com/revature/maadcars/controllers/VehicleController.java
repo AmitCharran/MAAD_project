@@ -1,5 +1,7 @@
 package com.revature.maadcars.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.maadcars.models.Vehicle;
 import com.revature.maadcars.models.Vehicle;
 import com.revature.maadcars.services.VehicleService;
@@ -10,12 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 /**
  * Controller implementation for the Vehicle Entity.
  */
 @Controller
-@RequestMapping("vehicles")
+@RequestMapping("/vehicles")
 public class VehicleController {
     private final VehicleService vehicleService;
     /**
@@ -61,8 +64,18 @@ public class VehicleController {
      */
     @PutMapping
     public @ResponseBody
-    Vehicle updateVehicle(@RequestBody Vehicle v){
-        return vehicleService.saveVehicle(v);
+    ResponseEntity<String> updateVehicle(@RequestBody Vehicle v) throws JsonProcessingException {
+        try{
+            if(vehicleService.getVehicleByVehicleId(v.getVehicle_id()) == null){
+                return ResponseEntity.notFound().build();
+            }
+        } catch(RuntimeException e){
+
+            return ResponseEntity.badRequest().body("Improper input when updating vehicle.");
+        }
+        Vehicle veh = vehicleService.saveVehicle(v);
+        String json = new ObjectMapper().writeValueAsString(veh);
+        return ResponseEntity.ok().body(json);
     }
     /**
      * Maps "DELETE Vehicles/{id}" to deletion of a persisted Vehicle by their Vehicle_id.
