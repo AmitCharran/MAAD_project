@@ -8,14 +8,12 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 class VehicleServiceTest {
 
-    @MockBean
-    Vehicle vehicleMock;
-    @MockBean
+    Vehicle vehicle;
     VehicleRepository vehicleRepositoryMock;
 
     VehicleService service;
@@ -23,20 +21,24 @@ class VehicleServiceTest {
     @BeforeEach
     void setUp() {
 
-        service = new VehicleService(vehicleRepositoryMock);
-
+        service = Mockito.mock(VehicleService.class);
+        vehicle = Mockito.mock(Vehicle.class);
+        vehicleRepositoryMock = Mockito.mock(VehicleRepository.class);
         
     }
 
     @Test
     void saveVehicle() {
-        when(vehicleRepositoryMock.save(vehicleMock)).thenReturn(vehicleMock);
+        when(vehicleRepositoryMock.save(any(Vehicle.class))).thenReturn(vehicle);
 
-        service.saveVehicle(vehicleMock);
+        service.saveVehicle(new Vehicle());
     }
 
     @Test
     void getVehicleByVehicleId() {
+        when(vehicleRepositoryMock.findById(anyInt())).thenReturn(java.util.Optional.ofNullable(vehicle));
+
+        service.saveVehicle(new Vehicle());
     }
 
     @Test

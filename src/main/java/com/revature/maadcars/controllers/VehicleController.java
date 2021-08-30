@@ -6,6 +6,8 @@ import com.revature.maadcars.models.Vehicle;
 import com.revature.maadcars.models.Vehicle;
 import com.revature.maadcars.services.VehicleService;
 import com.revature.maadcars.services.VehicleService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,7 @@ import java.util.List;
 @RequestMapping("/vehicles")
 public class VehicleController {
     private final VehicleService vehicleService;
+    private static final Logger logger = LoggerFactory.getLogger(VehicleController.class);
     /**
      * Injects service dependency
      */
@@ -67,15 +70,14 @@ public class VehicleController {
     ResponseEntity<String> updateVehicle(@RequestBody Vehicle v) throws JsonProcessingException {
         try{
             if(vehicleService.getVehicleByVehicleId(v.getVehicle_id()) == null){
+                logger.info("Attempted to update a vehicle that was not present in the database.");
                 return ResponseEntity.notFound().build();
             }
         } catch(RuntimeException e){
-
+            logger.warn("Failed to update vehicle.",e);
             return ResponseEntity.badRequest().body("Improper input when updating vehicle.");
         }
-        Vehicle veh = vehicleService.saveVehicle(v);
-        String json = new ObjectMapper().writeValueAsString(veh);
-        return ResponseEntity.ok().body(json);
+        return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(vehicleService.saveVehicle(v)));
     }
     /**
      * Maps "DELETE Vehicles/{id}" to deletion of a persisted Vehicle by their Vehicle_id.
