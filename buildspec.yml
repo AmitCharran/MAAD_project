@@ -12,9 +12,9 @@ phases:
     post_build:
       commands:
         - mvn package
-        - mv target/maadcars*.war maadcars*.war
+        - mv target/maadcars*.war maadcars.war 
         - echo Build completed successfully
     artifacts:
       files:
-        'maadcars*.war'
+        'maadcars.war'
       discard-paths: yes
