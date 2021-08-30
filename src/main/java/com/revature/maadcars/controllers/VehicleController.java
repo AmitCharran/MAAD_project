@@ -4,12 +4,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.maadcars.models.Vehicle;
 import com.revature.maadcars.services.VehicleService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 /**
  * Controller implementation for the Vehicle Entity.
@@ -17,6 +20,8 @@ import java.util.List;
 @Controller
 @RequestMapping("vehicles")
 public class VehicleController {
+    private static final Logger logger = LoggerFactory.getLogger(VehicleController.class);
+
     private final VehicleService vehicleService;
     /**
      * Injects service dependency
@@ -55,17 +60,22 @@ public class VehicleController {
     ResponseEntity<String> createVehicle(@RequestBody Vehicle v) throws JsonProcessingException {
         try {
             if (vehicleService.getVehicleByVin(v.getVin()) != null) {
+                logger.info("Attempted to insert vehicle with overlapping VIN: " + v.getVin() + " and failed.");
                 return ResponseEntity.unprocessableEntity().body("Violation of UNIQUE constraint on 'vin' column in 'vehicles' table!");
             }
             if (v.getVin().length() != 17) {
+                logger.info("Attempted to insert vehicle with invalid VIN: " + v.getVin() + " and failed.");
                 return ResponseEntity.badRequest().body("Vehicle Identification Number must be exactly 17 characters long!");
             }
         } catch (Exception e) {
             e.printStackTrace();
+            logger.warn(e.getMessage());
+            logger.warn(Arrays.toString(e.getStackTrace()));
             return ResponseEntity.unprocessableEntity().body(e.getMessage());
         }
         Vehicle objInserted = vehicleService.saveVehicle(v);
         String strJson = new ObjectMapper().writeValueAsString(objInserted);
+        logger.trace("Successfully inserted new Vehicle; assigned ID: " + objInserted.getVehicle_id());
         return ResponseEntity.ok()
                 .body(strJson);
     }

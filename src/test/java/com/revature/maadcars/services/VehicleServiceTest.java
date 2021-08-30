@@ -4,6 +4,7 @@ import com.revature.maadcars.models.Model;
 import com.revature.maadcars.models.User;
 import com.revature.maadcars.models.Vehicle;
 import com.revature.maadcars.repository.VehicleRepository;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -11,6 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -20,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VehicleServiceTest {
+    private static final Logger logger = LoggerFactory.getLogger(VehicleServiceTest.class);
+
     @InjectMocks
     VehicleService vehicleService;
 
@@ -27,6 +32,11 @@ public class VehicleServiceTest {
     Vehicle mockV;
     @Mock
     VehicleRepository vehicleRepository;
+
+    @BeforeAll
+    static void beforeAll() {
+        logger.trace("Now running VehicleService unit tests...");
+    }
 
     @BeforeEach
     void init() {
@@ -55,6 +65,7 @@ public class VehicleServiceTest {
         Vehicle objReturn = vehicleService.saveVehicle(mockV);
 
         assertEquals(objReturn, mockV);
+        logger.trace("Test passed: saveVehicle_ReturnsVehicle");
     }
 
     /**
@@ -70,6 +81,7 @@ public class VehicleServiceTest {
         Vehicle objReturn = vehicleService.getVehicleByVin("1234567890ABCDEFG");
 
         assertEquals(objReturn, mockV);
+        logger.trace("Test passed: getVehicleByVin_ReturnsVehicle");
     }
 
     /**
@@ -82,5 +94,6 @@ public class VehicleServiceTest {
         Vehicle objReturn = vehicleService.getVehicleByVin("00000000000000000");
 
         assertNull(objReturn);
+        logger.trace("Test passed: getVehicleByVin_ReturnsVehicle");
     }
 }

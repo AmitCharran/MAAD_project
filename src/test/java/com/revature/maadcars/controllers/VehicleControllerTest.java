@@ -3,8 +3,11 @@ package com.revature.maadcars.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.maadcars.models.*;
 import com.revature.maadcars.services.VehicleService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +26,8 @@ import java.util.List;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class VehicleControllerTest {
+    private static final Logger logger = LoggerFactory.getLogger(VehicleControllerTest.class);
+
     private MockMvc mockMvc;
     @Autowired
     private VehicleController vehicleController;
@@ -37,6 +42,11 @@ public class VehicleControllerTest {
     Make mockMk;
     @MockBean
     Model mockMd;
+
+    @BeforeAll
+    static void beforeAll() {
+        logger.trace("Now running VehicleController unit tests...");
+    }
 
     /**
      * On startup: setup MockMvc, create a test vehicle by injecting blank a mock user and model into its foreign keys fields, then finally adding it to a mock list of all vehicles.
@@ -78,6 +88,7 @@ public class VehicleControllerTest {
                 .andExpect(jsonPath("$.color").value("white"))
                 .andExpect(jsonPath("$._stolen").value("false"))
                 .andReturn();
+        logger.trace("Test passed: post_ReturnCreatedVehicle");
     }
 
     /**
@@ -95,6 +106,7 @@ public class VehicleControllerTest {
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$").value("Violation of UNIQUE constraint on 'vin' column in 'vehicles' table!"))
                 .andReturn();
+        logger.trace("Test passed: post_VinAlreadyInDatabase_ResponseStatus422");
     }
 
     /**
@@ -114,5 +126,6 @@ public class VehicleControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$").value("Vehicle Identification Number must be exactly 17 characters long!"))
                 .andReturn();
+        logger.trace("Test passed: post_VinNot17Chars_ResponseStatus400");
     }
 }
