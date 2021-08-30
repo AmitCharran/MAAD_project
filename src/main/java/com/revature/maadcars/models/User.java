@@ -24,13 +24,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int user_id;
 
-    @NotBlank(message = "Username is mandatory")
     @Column(name = "username", unique = true, nullable = false)
     private String username;
 
-    @Size(min = 5, max = 200, message = "password length needs to be between 5 and 200")
-    @NotBlank(message = "Password is mandatory")
-    @Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])[a-zA-Z0-9]{5,200}$", message = "Password must include at least one upper case character and one lower case character and one digit")
     @Column(name = "password", nullable = false)
     private String password;
 

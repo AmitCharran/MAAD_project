@@ -5,7 +5,12 @@ import com.revature.maadcars.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Service-layer implementation of User Entity.
@@ -37,7 +42,11 @@ public class UserService {
      * @return Same User as input(?)
      */
     public User saveUser(User user){
-        return userRepository.save(user);
+        if(userIsGoodForCreation(user)){
+            return userRepository.save(user);
+        }else{
+            return user;
+        }
     }
 
     /**
@@ -64,5 +73,25 @@ public class UserService {
      */
     public void deleteUser(Integer userId){
         userRepository.findById(userId).ifPresent(userRepository::delete);
+    }
+
+    /**
+     * Takes a user Object and if the properties are valid for creation, then return true
+     * Valid = between 5-200 length
+     * @param u user we are checking
+     * @return true or false
+     */
+    public boolean userIsGoodForCreation(User u){
+        int passwordLength = u.getPassword().length();
+        if(userRepository.findByUsername(u.getUsername()).isPresent()){
+            //TODO log user already exists
+            return false;
+        }else if(passwordLength > 5 && passwordLength < 200){
+            //TODO password length log password length
+            return false;
+        }else{
+            //TODO password and username is good
+            return true;
+        }
     }
 }

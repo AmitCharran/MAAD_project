@@ -67,20 +67,9 @@ public class UserController {
      * @param u User object interpreted from request body.
      * @return Persisted User.
      */
-    @ExceptionHandler(ConstraintViolationException.class)
     @PostMapping
     public @ResponseBody
-    ResponseEntity<String> createUser(@Valid @RequestBody User u) throws JsonProcessingException {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        Validator validator = factory.getValidator();
-
-        Set<ConstraintViolation<User>> violations = validator.validate(u);
-        for (ConstraintViolation<User> violation : violations) {
-
-
-            return ResponseEntity.badRequest().body(new ObjectMapper().writeValueAsString("Error"));
-        }
-
+    ResponseEntity<String> createUser(@RequestBody User u) throws JsonProcessingException {
         return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(userService.saveUser(u)));
     }
 
