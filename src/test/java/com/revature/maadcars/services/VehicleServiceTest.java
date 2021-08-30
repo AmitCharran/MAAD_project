@@ -7,30 +7,28 @@ import com.revature.maadcars.repository.VehicleRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(SpringExtension.class)
 public class VehicleServiceTest {
     private static final Logger logger = LoggerFactory.getLogger(VehicleServiceTest.class);
 
     @InjectMocks
     VehicleService vehicleService;
 
-    @Mock
     Vehicle mockV;
-    @Mock
+    @MockBean
     VehicleRepository vehicleRepository;
 
     @BeforeAll
@@ -41,6 +39,9 @@ public class VehicleServiceTest {
     @BeforeEach
     void init() {
         MockitoAnnotations.openMocks(this);
+        vehicleRepository = mock(VehicleRepository.class);
+
+        vehicleService = new VehicleService(vehicleRepository);
 
         mockV = new Vehicle();
         mockV.setVehicle_id(1);
@@ -60,9 +61,9 @@ public class VehicleServiceTest {
      */
     @Test
     public void saveVehicle_ReturnsVehicle() {
-        when(vehicleRepository.save(mockV)).thenReturn(mockV);
+        when(vehicleRepository.save(any(Vehicle.class))).thenReturn(mockV);
 
-        Vehicle objReturn = vehicleService.saveVehicle(mockV);
+        Vehicle objReturn = vehicleService.saveVehicle(new Vehicle());
 
         assertEquals(objReturn, mockV);
         logger.trace("Test passed: saveVehicle_ReturnsVehicle");
