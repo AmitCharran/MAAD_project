@@ -21,24 +21,28 @@ class VehicleServiceTest {
     @BeforeEach
     void setUp() {
 
-        service = Mockito.mock(VehicleService.class);
+
         vehicle = Mockito.mock(Vehicle.class);
         vehicleRepositoryMock = Mockito.mock(VehicleRepository.class);
-        
+        service = new VehicleService(vehicleRepositoryMock);
     }
 
     @Test
     void saveVehicle() {
         when(vehicleRepositoryMock.save(any(Vehicle.class))).thenReturn(vehicle);
 
-        service.saveVehicle(new Vehicle());
+        Vehicle veh = service.saveVehicle(new Vehicle());
+
+        assertEquals(vehicle, veh);
     }
 
     @Test
     void getVehicleByVehicleId() {
         when(vehicleRepositoryMock.findById(anyInt())).thenReturn(java.util.Optional.ofNullable(vehicle));
 
-        service.saveVehicle(new Vehicle());
+        Vehicle veh = service.getVehicleByVehicleId(1);
+
+        assertEquals(vehicle, veh);
     }
 
     @Test
