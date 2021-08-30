@@ -35,6 +35,15 @@ public class VehicleService {
     public Vehicle getVehicleByVehicleId(Integer id){
         return vehicleRepository.findById(id).orElseThrow(RuntimeException::new);
     }
+
+    /**
+     * (Repository method call) Gets 1 Vehicle by VIN
+     * @param vin String
+     * @return Vehicle row (only one)
+     */
+    public Vehicle getVehicleByVin(String vin){
+        return vehicleRepository.findByVin(vin).orElse(null);
+    }
     /**
      * (Repository method call) Gets List of all Vehicles
      * @return List<Vehicle>
