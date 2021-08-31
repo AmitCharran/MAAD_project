@@ -47,6 +47,7 @@ class VehicleControllerTest {
     private User userMock;
 
     private MockMvc mockMvc;
+    @MockBean
     private Vehicle vehicle;
     private List<Vehicle> vehicles;
 
@@ -73,6 +74,8 @@ class VehicleControllerTest {
       
         vehicles = new ArrayList<>();
         vehicles.add(vehicle);
+
+        userMock.setUser_id(1);
     }
 
     @Test
@@ -172,6 +175,42 @@ class VehicleControllerTest {
     }
 
     @Test
-    void deleteVehicle() {
+    void delete_ValidRequest() throws Exception {
+        when(vehicleService.getVehicleByVehicleId(1)).thenReturn(vehicle);
+
+        mockMvc.perform(delete("/vehicles/1")
+                .header("user_id", "1"))
+                .andExpect(status().isOk());
+        logger.trace("Test passed: delete_ValidRequest");
     }
+
+    @Test
+    void delete_VehicleIdNotExists_ResponseStatus404() throws Exception {
+        when(vehicleService.getVehicleByVehicleId(1)).thenReturn(null);
+
+        mockMvc.perform(delete("/vehicles/1")
+                .header("user_id", "1"))
+                .andExpect(status().isNotFound());
+        logger.trace("Test passed: delete_VehicleIdNotExists_ResponseStatus404");
+    }
+
+    @Test
+    void delete_NotLoggedIn_ResponseStatus403() throws Exception {
+        when(vehicleService.getVehicleByVehicleId(1)).thenReturn(vehicle);
+
+        mockMvc.perform(delete("/vehicles/1"))
+                .andExpect(status().isForbidden());
+        logger.trace("Test passed: delete_NotLoggedIn_ResponseStatus403");
+    }
+
+    @Test
+    void delete_WrongUserId_ResponseStatus403() throws Exception {
+        when(vehicleService.getVehicleByVehicleId(1)).thenReturn(vehicle);
+
+        mockMvc.perform(delete("/vehicles/1")
+                .header("user_id", "2"))
+                .andExpect(status().isForbidden());
+        logger.trace("Test passed: delete_WrongUserId_ResponseStatus403");
+    }
+
 }
