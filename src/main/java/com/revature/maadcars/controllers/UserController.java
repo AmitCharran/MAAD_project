@@ -63,13 +63,18 @@ public class UserController {
 
     /**
      * Maps POST Method to creation of a new persisted User based on request body.
+     * Bad Request status code is triggered if username already exists or password does not match requirements.
      * @param u User object interpreted from request body.
-     * @return ResponseEntity with status code 200 OK and Json of either persisted User if successful or of input User if unsuccessful.
+     * @return ResponseEntity with status code 200 OK or status code 400 Bad Request
      */
     @PostMapping
     public @ResponseBody
     ResponseEntity<String> createUser(@RequestBody User u) throws JsonProcessingException {
-        return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(userService.saveUser(u)));
+        try {
+            return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(userService.saveUser(u)));
+        }catch (IllegalArgumentException exception){
+            return ResponseEntity.badRequest().body(exception.getMessage());
+        }
     }
 
     /**
