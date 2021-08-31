@@ -1,21 +1,28 @@
 package com.revature.maadcars.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.revature.maadcars.models.*;
+import com.revature.maadcars.models.Make;
+import com.revature.maadcars.models.Model;
+import com.revature.maadcars.models.User;
+import com.revature.maadcars.models.Vehicle;
 import com.revature.maadcars.services.VehicleService;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletResponse;
+
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -25,47 +32,57 @@ import java.util.List;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class VehicleControllerTest {
+class VehicleControllerTest {
     private static final Logger logger = LoggerFactory.getLogger(VehicleControllerTest.class);
 
-    private MockMvc mockMvc;
     @Autowired
     private VehicleController vehicleController;
+
     @MockBean
     private VehicleService vehicleService;
 
-    List<Vehicle> mockVehicles;
-    Vehicle mockV;
     @MockBean
-    User mockU;
+    private Model modelMock;
     @MockBean
-    Make mockMk;
+    private Make makeMock;
     @MockBean
-    Model mockMd;
+    private User userMock;
+
+    private MockMvc mockMvc;
+    private Vehicle vehicle;
+    private List<Vehicle> vehicles;
 
     @BeforeAll
     static void beforeAll() {
         logger.trace("Now running VehicleController unit tests...");
     }
-
     /**
      * On startup: setup MockMvc, create a test vehicle by injecting blank a mock user and model into its foreign keys fields, then finally adding it to a mock list of all vehicles.
      */
     @BeforeEach
-    void init() {
+    void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(vehicleController).build();
-        mockU = new User();
-        mockMd = new Model();
+        userMock = new User();
+        modelMock = new Model();
 
-        mockVehicles = new ArrayList<>();
-        mockV = new Vehicle();
-        mockV.setVehicle_id(1);
-        mockV.setUser(mockU);
-        mockV.setModel(mockMd);
-        mockV.setVin("1234567890ABCDEFG");
-        mockV.setColor("white");
-        mockV.set_stolen(false);
-        mockVehicles.add(mockV);
+        vehicle = new Vehicle();
+        vehicle.setVehicle_id(1);
+        vehicle.setVin("1234567890ABCDEFG");
+        vehicle.setModel(modelMock);
+        vehicle.setUser(userMock);
+        vehicle.set_stolen(false);
+        vehicle.setColor("white");
+      
+        vehicles = new ArrayList<>();
+        vehicles.add(vehicle);
+    }
+
+    @Test
+    void getAllVehicles() {
+    }
+
+    @Test
+    void findVehicleById() {
     }
 
     /**
@@ -75,12 +92,13 @@ public class VehicleControllerTest {
      */
     @Test
     void post_ReturnCreatedVehicle() throws Exception {
-        when(vehicleService.getVehicleByVin(mockV.getVin())).thenReturn(null);
-        when(vehicleService.saveVehicle(any(Vehicle.class))).thenReturn(mockV);
+        when(vehicleService.getVehicleByVin(vehicle.getVin())).thenReturn(null);
+        when(vehicleService.saveVehicle(any(Vehicle.class))).thenReturn(vehicle);
 
         mockMvc.perform(post("/vehicles")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(mockV)))
+                .content(new ObjectMapper().writeValueAsString(vehicle)))
+
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists())
                 .andExpect(jsonPath("$.vehicle_id").value("1"))
@@ -98,11 +116,11 @@ public class VehicleControllerTest {
      */
     @Test
     void post_VinAlreadyInDatabase_ResponseStatus422() throws Exception {
-        when(vehicleService.getVehicleByVin(mockV.getVin())).thenReturn(mockV);
+        when(vehicleService.getVehicleByVin(vehicle.getVin())).thenReturn(vehicle);
 
         mockMvc.perform(post("/vehicles")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(mockV)))
+                .content(new ObjectMapper().writeValueAsString(vehicle)))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$").value("Violation of UNIQUE constraint on 'vin' column in 'vehicles' table!"))
                 .andReturn();
@@ -116,16 +134,46 @@ public class VehicleControllerTest {
      */
     @Test
     void post_VinNot17Chars_ResponseStatus400() throws Exception {
-        mockV.setVin("0000");
+        vehicle.setVin("0000");
 
-        when(vehicleService.getVehicleByVin(mockV.getVin())).thenReturn(null);
+        when(vehicleService.getVehicleByVin(vehicle.getVin())).thenReturn(null);
 
         mockMvc.perform(post("/vehicles")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(mockV)))
+                .content(new ObjectMapper().writeValueAsString(vehicle)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$").value("Vehicle Identification Number must be exactly 17 characters long!"))
                 .andReturn();
         logger.trace("Test passed: post_VinNot17Chars_ResponseStatus400");
+    }
+
+    @Test
+    void shouldReturnOkVehicleWhenVehicleUpdate() throws Exception {
+        when(vehicleService.saveVehicle(any(Vehicle.class))).thenReturn(vehicle);
+        when(vehicleService.getVehicleByVehicleId(anyInt())).thenReturn(vehicle);
+
+        mockMvc.perform(put("/vehicles")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(vehicle)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$.vehicle_id").value("1"))
+                .andExpect(jsonPath("$.vin").value("1234567890asdfghj"))
+                .andReturn();
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenVehicleUpdate() throws Exception {
+        when(vehicleService.getVehicleByVehicleId(anyInt())).thenReturn(null);
+
+        mockMvc.perform(put("/vehicles")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(vehicle)))
+                .andExpect(status().isNotFound())
+                .andReturn();
+    }
+
+    @Test
+    void deleteVehicle() {
     }
 }

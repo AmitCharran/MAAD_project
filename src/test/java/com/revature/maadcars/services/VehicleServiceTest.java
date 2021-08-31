@@ -7,48 +7,37 @@ import com.revature.maadcars.repository.VehicleRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class VehicleServiceTest {
+class VehicleServiceTest {
     private static final Logger logger = LoggerFactory.getLogger(VehicleServiceTest.class);
 
-    @InjectMocks
-    VehicleService vehicleService;
+    Vehicle vehicle;
+    VehicleRepository vehicleRepositoryMock;
 
-    @Mock
-    Vehicle mockV;
-    @Mock
-    VehicleRepository vehicleRepository;
+    VehicleService service;
+
 
     @BeforeAll
     static void beforeAll() {
         logger.trace("Now running VehicleService unit tests...");
     }
-
+  
     @BeforeEach
-    void init() {
-        MockitoAnnotations.openMocks(this);
+    void setUp() {
 
-        mockV = new Vehicle();
-        mockV.setVehicle_id(1);
-        mockV.setUser(new User());
-        mockV.setModel(new Model());
-        mockV.setVin("1234567890ABCDEFG");
-        mockV.setColor("white");
-        mockV.set_stolen(false);
+
+        vehicle = Mockito.mock(Vehicle.class);
+        vehicleRepositoryMock = Mockito.mock(VehicleRepository.class);
+        service = new VehicleService(vehicleRepositoryMock);
     }
 
     /**
@@ -59,15 +48,22 @@ public class VehicleServiceTest {
      * TODO: Implement a real test if business logic is added to saveVehicle() later.
      */
     @Test
-    public void saveVehicle_ReturnsVehicle() {
-        when(vehicleRepository.save(mockV)).thenReturn(mockV);
+    void saveVehicle() {
+        when(vehicleRepositoryMock.save(any(Vehicle.class))).thenReturn(vehicle);
 
-        Vehicle objReturn = vehicleService.saveVehicle(mockV);
+        Vehicle veh = service.saveVehicle(new Vehicle());
 
-        assertEquals(objReturn, mockV);
-        logger.trace("Test passed: saveVehicle_ReturnsVehicle");
+        assertEquals(vehicle, veh);
     }
 
+    @Test
+    void getVehicleByVehicleId() {
+        when(vehicleRepositoryMock.findById(anyInt())).thenReturn(java.util.Optional.ofNullable(vehicle));
+
+        Vehicle veh = service.getVehicleByVehicleId(1);
+
+        assertEquals(vehicle, veh);
+    }
     /**
      * Calls getVehicleByVin() and passes it a String containing the test Vehicle's VIN, and asserts that the returned Vehicle is equivalent to the test Vehicle.
      *
@@ -76,11 +72,11 @@ public class VehicleServiceTest {
      */
     @Test
     public void getVehicleByVin_ReturnsVehicle() {
-        when(vehicleRepository.findByVin("1234567890ABCDEFG")).thenReturn(Optional.of(mockV));
+        when(vehicleRepositoryMock.findByVin("1234567890ABCDEFG")).thenReturn(Optional.of(vehicle));
 
-        Vehicle objReturn = vehicleService.getVehicleByVin("1234567890ABCDEFG");
+        Vehicle objReturn = service.getVehicleByVin("1234567890ABCDEFG");
 
-        assertEquals(objReturn, mockV);
+        assertEquals(vehicle, objReturn);
         logger.trace("Test passed: getVehicleByVin_ReturnsVehicle");
     }
 
@@ -89,11 +85,19 @@ public class VehicleServiceTest {
      */
     @Test
     public void getVehicleByVin_VinNotOnDatabase_ReturnsNull() {
-        when(vehicleRepository.findByVin("00000000000000000")).thenReturn(Optional.empty());
+        when(vehicleRepositoryMock.findByVin("00000000000000000")).thenReturn(Optional.empty());
 
-        Vehicle objReturn = vehicleService.getVehicleByVin("00000000000000000");
+        Vehicle objReturn = service.getVehicleByVin("00000000000000000");
 
         assertNull(objReturn);
         logger.trace("Test passed: getVehicleByVin_ReturnsVehicle");
+    }
+
+    @Test
+    void getAllVehicles() {
+    }
+
+    @Test
+    void deleteVehicle() {
     }
 }
