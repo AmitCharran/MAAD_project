@@ -1,5 +1,7 @@
 package com.revature.maadcars.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.maadcars.models.User;
 import com.revature.maadcars.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.*;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Controller implementation for the User Entity.
@@ -62,12 +66,12 @@ public class UserController {
     /**
      * Maps POST Method to creation of a new persisted User based on request body.
      * @param u User object interpreted from request body.
-     * @return Persisted User.
+     * @return ResponseEntity with status code 200 OK and Json of either persisted User if successful or of input User if unsuccessful.
      */
     @PostMapping
     public @ResponseBody
-    User createUser(@RequestBody User u){
-        return userService.saveUser(u);
+    ResponseEntity<String> createUser(@RequestBody User u) throws JsonProcessingException {
+        return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(userService.saveUser(u)));
     }
 
     /**

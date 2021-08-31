@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -26,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class UserControllerTest {
 
     private MockMvc mockMvc;
-
     @Autowired
     private UserController userController;
 
@@ -37,7 +37,7 @@ class UserControllerTest {
     private User user;
 
     @BeforeEach
-    void setup() {
+    void setup(){
         mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
 
         user = new User();
@@ -60,4 +60,21 @@ class UserControllerTest {
                 .andExpect(jsonPath("$").exists())
                 .andExpect(jsonPath("$.user_id").value("1"));
     }
+}
+
+    @Test
+    void saveUserToDatabase() throws Exception {
+        when(userService.saveUser(any(User.class))).thenReturn(user);
+
+        mockMvc.perform(post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(user)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$.user_id").value(1))
+                .andExpect(jsonPath("$.username").value("test_user1"))
+                .andExpect(jsonPath("$.password").value("password"))
+                .andReturn();
+    }
+
 }

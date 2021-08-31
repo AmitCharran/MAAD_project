@@ -14,9 +14,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 class UserServiceTest {
+    @MockBean
     private UserRepository userRepository;
     private UserService userService;
 
@@ -39,7 +41,7 @@ class UserServiceTest {
         userList = new ArrayList<>();
         userList.add(user);
     }
-
+  
     @Test
     void loginWithValidCredentials() {
         when(userRepository.findByUsername("test_user1")).thenReturn(Optional.of(user));
@@ -73,5 +75,29 @@ class UserServiceTest {
         catch (RuntimeException e){
             //Do nothing because this is desired result
         }
+    }
+
+    @Test
+    void saveUserToDatabase() throws Exception {
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+        when(userRepository.save(user)).thenReturn(user);
+        userService.saveUser(user);
+        assertEquals(user, userService.saveUser(user));
+
+    }
+
+    @Test
+    void SaveUserToDatabaseButUserNameAlreadyTaken() throws Exception{
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
+        userService.saveUser(user);
+        assertEquals(user, userService.saveUser(user));
+    }
+
+    @Test
+    void SaveUserToDatabaseButUserPasswordTooShortOrTooLong(){
+        user.setPassword("l");
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+        userService.saveUser(user);
+        assertEquals(user, userService.saveUser(user));
     }
 }
