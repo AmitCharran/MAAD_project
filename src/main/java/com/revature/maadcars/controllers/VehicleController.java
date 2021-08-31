@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.Arrays;
 import java.util.List;
 /**
@@ -55,7 +54,7 @@ public class VehicleController {
      * Maps POST Method to creation of a new persisted Vehicle based on request body.
      * Includes check to throw exceptions if a vehicle with the same VIN is already in the database, or if VIN of vehicle provided is not exactly 17 chars long.
      * @param v Vehicle object interpreted from request body.
-     * @return Persisted Vehicle.
+     * @return ResponseEntity with status code 200 OK and Json of inserted Vehicle if successful, or a 4xx status code with error message in response body if input fails validation.
      */
     @PostMapping
     public @ResponseBody
