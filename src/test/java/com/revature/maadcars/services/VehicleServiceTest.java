@@ -27,7 +27,7 @@ class VehicleServiceTest {
     static void beforeAll() {
         logger.trace("Now running VehicleService unit tests...");
     }
-
+  
     @BeforeEach
     void setUp() {
 
@@ -54,7 +54,7 @@ class VehicleServiceTest {
 
         assertEquals(vehicle, veh);
     }
-
+  
     /**
      * Calls getVehicleByVin() and passes it a String containing the test Vehicle's VIN, and asserts that the returned Vehicle is equivalent to the test Vehicle.
      *
@@ -67,7 +67,7 @@ class VehicleServiceTest {
 
         Vehicle objReturn = service.getVehicleByVin("1234567890ABCDEFG");
 
-        assertEquals(objReturn, vehicle);
+        assertEquals(vehicle, objReturn);
         logger.trace("Test passed: getVehicleByVin_ReturnsVehicle");
     }
 

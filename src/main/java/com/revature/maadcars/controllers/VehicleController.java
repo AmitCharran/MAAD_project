@@ -82,7 +82,7 @@ public class VehicleController {
     /**
      * Maps PUT Method to updating and persisting the Vehicle that matches the request body.
      * @param v Vehicle object interpreted from request body.
-     * @return Updated Vehicle.
+     * @return Updated ResponseEntity<String>.
      */
     @PutMapping
     public @ResponseBody
