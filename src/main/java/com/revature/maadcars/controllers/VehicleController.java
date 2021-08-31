@@ -105,8 +105,9 @@ public class VehicleController {
      */
     @DeleteMapping("/{id}")
     public @ResponseBody
-    ResponseEntity<HttpStatus> deleteVehicle(@PathVariable String id){
+    ResponseEntity<String> deleteVehicle(@PathVariable String id){
+
         vehicleService.deleteVehicle(Integer.parseInt(id));
-        return ResponseEntity.ok(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 }
