@@ -65,7 +65,7 @@ public class UserController {
     /**
      * Maps POST Method to creation of a new persisted User based on request body.
      * @param u User object interpreted from request body.
-     * @return Persisted User.
+     * @return ResponseEntity with status code 200 OK and Json of either persisted User if successful or of input User if unsuccessful.
      */
     @PostMapping
     public @ResponseBody
