@@ -23,7 +23,6 @@ public class VehicleController {
     private static final Logger logger = LoggerFactory.getLogger(VehicleController.class);
 
     private final VehicleService vehicleService;
-    private static final Logger logger = LoggerFactory.getLogger(VehicleController.class);
     /**
      * Injects service dependency
      */
