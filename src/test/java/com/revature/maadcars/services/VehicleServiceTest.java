@@ -1,7 +1,5 @@
 package com.revature.maadcars.services;
 
-import com.revature.maadcars.models.Model;
-import com.revature.maadcars.models.User;
 import com.revature.maadcars.models.Vehicle;
 import com.revature.maadcars.repository.VehicleRepository;
 import org.junit.jupiter.api.BeforeAll;
