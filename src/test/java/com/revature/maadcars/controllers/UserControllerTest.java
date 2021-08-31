@@ -61,7 +61,6 @@ class UserControllerTest {
                 .andExpect(jsonPath("$").exists())
                 .andExpect(jsonPath("$.user_id").value("1"));
     }
-}
 
     @Test
     void saveUserToDatabase() throws Exception {

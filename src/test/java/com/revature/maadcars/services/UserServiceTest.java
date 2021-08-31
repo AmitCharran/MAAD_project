@@ -1,13 +1,10 @@
 package com.revature.maadcars.services;
 
-import com.revature.maadcars.controllers.UserController;
 import com.revature.maadcars.models.User;
 import com.revature.maadcars.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +15,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 class UserServiceTest {
-    @MockBean
     private UserRepository userRepository;
     private UserService userService;
 
