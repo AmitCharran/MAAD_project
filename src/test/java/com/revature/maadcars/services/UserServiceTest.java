@@ -16,11 +16,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
 class UserServiceTest {
-    @MockBean
-    private UserController userController;
-    @MockBean
     private UserRepository userRepository;
     private UserService userService;
 
@@ -33,7 +29,6 @@ class UserServiceTest {
     @BeforeEach
     void setup() {
         userRepository = Mockito.mock(UserRepository.class);
-        userController = Mockito.mock(UserController.class);
         userService = new UserService(userRepository);
 
         user = new User();
