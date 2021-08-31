@@ -33,11 +33,17 @@ public class UserService {
 
     /**
      * (Repository method call) Persists input User into 1 row
+     * There is also a validation function that checks if username already exists
+     * or password length is between 5 and 200
      * @param user User object
      * @return Same User as input(?)
      */
     public User saveUser(User user){
-        return userRepository.save(user);
+        if(userIsGoodForCreation(user)){
+            return userRepository.save(user);
+        }else{
+            return user;
+        }
     }
 
     /**
@@ -64,5 +70,25 @@ public class UserService {
      */
     public void deleteUser(Integer userId){
         userRepository.findById(userId).ifPresent(userRepository::delete);
+    }
+
+    /**
+     * Takes a user Object and if the properties are valid for creation, then return true
+     * Valid = between 5-200 length and username does not exists in database
+     * @param u user we are checking
+     * @return true or false
+     */
+    public boolean userIsGoodForCreation(User u){
+        int passwordLength = u.getPassword().length();
+        if(userRepository.findByUsername(u.getUsername()).isPresent()){
+            //TODO log user already exists
+            return false;
+        }else if(passwordLength < 5 || passwordLength > 200){
+            //TODO password length log password length
+            return false;
+        }else{
+            //TODO password and username is good
+            return true;
+        }
     }
 }
