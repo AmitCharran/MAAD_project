@@ -56,7 +56,6 @@ class VehicleControllerTest {
     static void beforeAll() {
         logger.trace("Now running VehicleController unit tests...");
     }
-  
     /**
      * On startup: setup MockMvc, create a test vehicle by injecting blank a mock user and model into its foreign keys fields, then finally adding it to a mock list of all vehicles.
      */
@@ -99,6 +98,7 @@ class VehicleControllerTest {
         mockMvc.perform(post("/vehicles")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(vehicle)))
+
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists())
                 .andExpect(jsonPath("$.vehicle_id").value("1"))

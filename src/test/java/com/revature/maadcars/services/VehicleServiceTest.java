@@ -1,5 +1,7 @@
 package com.revature.maadcars.services;
 
+import com.revature.maadcars.models.Model;
+import com.revature.maadcars.models.User;
 import com.revature.maadcars.models.Vehicle;
 import com.revature.maadcars.repository.VehicleRepository;
 import org.junit.jupiter.api.BeforeAll;
@@ -22,6 +24,7 @@ class VehicleServiceTest {
     VehicleRepository vehicleRepositoryMock;
 
     VehicleService service;
+
 
     @BeforeAll
     static void beforeAll() {
@@ -54,7 +57,6 @@ class VehicleServiceTest {
 
         assertEquals(vehicle, veh);
     }
-  
     /**
      * Calls getVehicleByVin() and passes it a String containing the test Vehicle's VIN, and asserts that the returned Vehicle is equivalent to the test Vehicle.
      *
