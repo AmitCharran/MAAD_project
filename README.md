@@ -1,7 +1,7 @@
 # Project 2- MAAD Group
 For Project 2, we have built a car management application, which allows users to register their vehicles, as well as post them for sale and buy other vehicles.
 ## API
-The API is from NHTSA (National Highway Traffic Safety Administration). We will leverage the database to get information on vehicles (e.g. make/model/year) for the users to query cars during registration.
+The API is from NHTSA (National Highway Traffic Safety Administration). We will leverage the database to get information on vehicles (e.g. make/model/year) for the users to query cars during registration. https://vpic.nhtsa.dot.gov/api/
 ## User Stories
 As a user, I can:
 - [ ] register a new user account with the system (must be secured with a password)
