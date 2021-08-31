@@ -43,6 +43,6 @@ public class Vehicle {
     @Column(name = "is_stolen", columnDefinition = "boolean not null default false")
     private boolean is_stolen;
 
-    //@Column(name = "description")
-    //private String description;
+    @Column(name = "description")
+    private String description;
 }

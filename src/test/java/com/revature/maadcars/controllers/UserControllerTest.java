@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -26,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class UserControllerTest {
 
-
     private MockMvc mockMvc;
     @Autowired
     private UserController userController;
@@ -36,7 +36,6 @@ class UserControllerTest {
 
     private List<User> userList;
     private User user;
-
 
     @BeforeEach
     void setup(){
@@ -51,6 +50,17 @@ class UserControllerTest {
         userList.add(user);
     }
 
+    @Test
+    void shouldReturnUserIdWhenLoggingIn() throws Exception{
+        when(userService.login("test_user1", "password")).thenReturn(user);
+
+        mockMvc.perform(post("/users/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(user)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$.user_id").value("1"));
+    }
 
     @Test
     void saveUserToDatabase() throws Exception {

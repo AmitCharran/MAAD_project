@@ -1,5 +1,6 @@
 package com.revature.maadcars.models;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import java.util.List;
 @Table(name="users")
 @Getter @Setter
 @NoArgsConstructor
+@EqualsAndHashCode
 public class User {
     @Id
     @Column(name = "user_id")
