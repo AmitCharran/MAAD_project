@@ -19,10 +19,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletResponse;
-
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -158,7 +156,7 @@ class VehicleControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists())
                 .andExpect(jsonPath("$.vehicle_id").value("1"))
-                .andExpect(jsonPath("$.vin").value("1234567890asdfghj"))
+                .andExpect(jsonPath("$.vin").value("1234567890ABCDEFG"))
                 .andReturn();
     }
 
