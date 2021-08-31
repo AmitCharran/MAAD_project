@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -60,7 +61,6 @@ class UserControllerTest {
                 .andExpect(jsonPath("$").exists())
                 .andExpect(jsonPath("$.user_id").value("1"));
     }
-}
 
     @Test
     void saveUserToDatabase() throws Exception {

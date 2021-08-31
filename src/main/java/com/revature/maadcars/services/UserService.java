@@ -97,8 +97,6 @@ public class UserService {
         }
     }
 
-
-}
     /**
      * Takes a user Object and if the properties are valid for creation, then return true
      * Valid = between 5-200 length and username does not exists in database
