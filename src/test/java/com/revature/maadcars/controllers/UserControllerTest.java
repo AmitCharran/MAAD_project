@@ -77,4 +77,15 @@ class UserControllerTest {
                 .andReturn();
     }
 
+    @Test
+    void saveUserToDatabaseExceptBadInput() throws Exception {
+        when(userService.saveUser(any(User.class))).thenThrow(IllegalArgumentException.class);
+
+        mockMvc.perform(post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(user)))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+    }
+
 }
