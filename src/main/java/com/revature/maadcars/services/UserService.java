@@ -3,9 +3,11 @@ package com.revature.maadcars.services;
 import com.revature.maadcars.models.User;
 import com.revature.maadcars.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service-layer implementation of User Entity.
@@ -65,4 +67,22 @@ public class UserService {
     public void deleteUser(Integer userId){
         userRepository.findById(userId).ifPresent(userRepository::delete);
     }
+
+    public User login(String username, String password) throws RuntimeException{
+        Optional<User> user = userRepository.findByUsername(username);
+        if(user.isPresent()){
+            //Compare input to stored password
+            if(password.equals(user.get().getPassword())){
+                return user.get();
+            }
+            else{
+                throw new RuntimeException();
+            }
+        }
+        else{
+            throw new RuntimeException();
+        }
+    }
+
+
 }
