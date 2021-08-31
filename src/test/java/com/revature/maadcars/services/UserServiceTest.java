@@ -6,7 +6,6 @@ import com.revature.maadcars.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
@@ -15,7 +14,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -39,9 +37,9 @@ class UserServiceTest {
         userService = new UserService(userRepository);
 
         user = new User();
-        user.setUser_id(TEST_USER_ID);
-        user.setUsername(TEST_USER_USERNAME);
-        user.setPassword(TEST_USER_PASSWORD);
+        user.setUser_id(1);
+        user.setUsername("test_user1");
+        user.setPassword("password");
 
         userList = new ArrayList<>();
         userList.add(user);
@@ -49,19 +47,19 @@ class UserServiceTest {
 
     @Test
     void loginWithValidCredentials() {
-        when(userRepository.findByUsername(TEST_USER_USERNAME)).thenReturn(Optional.of(user));
+        when(userRepository.findByUsername("test_user1")).thenReturn(Optional.of(user));
 
-        User foundUser = userService.login(TEST_USER_USERNAME, TEST_USER_PASSWORD);
+        User foundUser = userService.login("test_user1", "password");
 
         assertEquals(foundUser, user);
     }
 
     @Test
     void loginToNonExistentUser() {
-        when(userRepository.findByUsername(TEST_USER_USERNAME)).thenReturn(null);
+        when(userRepository.findByUsername("test_user1")).thenReturn(null);
 
         try{
-            userService.login(TEST_USER_USERNAME, TEST_USER_PASSWORD);
+            userService.login("test_user1", "password");
             fail("Expected RuntimeException to be thrown.");
         }
         catch (RuntimeException e){
@@ -71,10 +69,10 @@ class UserServiceTest {
 
     @Test
     void loginWithIncorrectCredentials() {
-        when(userRepository.findByUsername(TEST_USER_USERNAME)).thenReturn(Optional.of(user));
+        when(userRepository.findByUsername("test_user1")).thenReturn(Optional.of(user));
 
         try{
-            userService.login(TEST_USER_USERNAME, "bazinga");
+            userService.login("test_user1", "bazinga");
             fail("Expected RuntimeException to be thrown.");
         }
         catch (RuntimeException e){

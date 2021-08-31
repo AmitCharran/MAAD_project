@@ -1,7 +1,5 @@
 package com.revature.maadcars.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.maadcars.models.User;
 import com.revature.maadcars.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,15 +93,21 @@ public class UserController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
+    /**
+     * Login a user. Returns the user's ID to a front-end to track the session.
+     * @param u User in post body with the username and password to be used
+     * @return a ResponseEntity with HTTP status 200 (OK)
+     */
     @PostMapping("/login")
     public @ResponseBody
     ResponseEntity<String> login(@RequestBody User u){
         try{
             User user = userService.login(u.getUsername(), u.getPassword());
-            String responseBody = "{ \"user_id\" : " + user.getUsername() + " }";
+            String responseBody = "{ \"user_id\" : " + user.getUser_id() + " }";
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(responseBody);
         }
         catch (RuntimeException e){
+            e.printStackTrace();
             return ResponseEntity.badRequest().body("Login credentials are incorrect.");
         }
     }

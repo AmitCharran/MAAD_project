@@ -3,7 +3,6 @@ package com.revature.maadcars.services;
 import com.revature.maadcars.models.User;
 import com.revature.maadcars.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -68,6 +67,14 @@ public class UserService {
         userRepository.findById(userId).ifPresent(userRepository::delete);
     }
 
+    /**
+     * Looks up a user by their username and see if the input password matches their
+     * stored password.
+     * @param username The User's username, used to look up the User
+     * @param password Input password
+     * @return the User with username if the password matches their stored password
+     * @throws RuntimeException if the User can't be found or the password does not match
+     */
     public User login(String username, String password) throws RuntimeException{
         Optional<User> user = userRepository.findByUsername(username);
         if(user.isPresent()){
