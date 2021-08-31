@@ -136,7 +136,7 @@ class VehicleControllerTest {
     void post_VinNot17Chars_ResponseStatus400() throws Exception {
         vehicle.setVin("0000");
 
-        when(vehicleService.getVehicleByVin(mockV.getVin())).thenReturn(null);
+        when(vehicleService.getVehicleByVin(vehicle.getVin())).thenReturn(null);
 
         mockMvc.perform(post("/vehicles")
                 .contentType(MediaType.APPLICATION_JSON)
