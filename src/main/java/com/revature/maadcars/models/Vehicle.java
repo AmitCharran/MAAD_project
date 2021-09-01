@@ -35,8 +35,8 @@ public class Vehicle {
     private Model model;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "vehicle")
-    private List<Sale> sales;
+    @OneToOne(mappedBy = "vehicle")
+    private Sale sale;
 
     @Column(name = "vin", unique = true, nullable = false)
     private String vin;

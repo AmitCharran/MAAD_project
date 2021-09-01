@@ -2,10 +2,10 @@ package com.revature.maadcars.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.revature.maadcars.models.User;
 import com.revature.maadcars.models.Vehicle;
 import com.revature.maadcars.models.VehicleDTO;
 import com.revature.maadcars.services.ModelService;
+import com.revature.maadcars.services.SaleService;
 import com.revature.maadcars.services.UserService;
 import com.revature.maadcars.services.VehicleService;
 import org.slf4j.Logger;
@@ -31,6 +31,8 @@ public class VehicleController {
     private ModelService modelService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private SaleService saleService;
     /**
      * Injects service dependency
      */
@@ -92,11 +94,13 @@ public class VehicleController {
         logger.trace("Got past input validation for createVehicle! Json dump of VehicleDTO's current state below:");
         String strJson = new ObjectMapper().writeValueAsString(vDto);
         logger.trace(strJson);
-        Vehicle objInput = new ObjectMapper().readValue(strJson, Vehicle.class);
+        /*Vehicle objInput = new ObjectMapper().readValue(strJson, Vehicle.class);
         objInput.setUser(userService.getUserByUserId(Integer.parseInt(current_user_id)));
-        objInput.setModel(modelService.getModelByModelId(vDto.getModel_id()));
+        objInput.setModel(modelService.getModelByModelId(vDto.getModel_id()));*/
+        Vehicle objInput = vDto.toObject(userService, modelService, saleService);
+
         Vehicle objInserted = vehicleService.saveVehicle(objInput);
-        String strResponseJson = new ObjectMapper().writeValueAsString(objInserted);
+        String strResponseJson = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(objInserted);
         logger.trace("Successfully inserted new Vehicle; assigned ID: " + objInserted.getVehicle_id());
         return ResponseEntity.ok()
                 .body(strResponseJson);
