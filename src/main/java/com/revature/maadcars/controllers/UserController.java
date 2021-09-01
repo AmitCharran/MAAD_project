@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.maadcars.models.User;
 import com.revature.maadcars.services.UserService;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -103,6 +104,7 @@ public class UserController {
      * @return a ResponseEntity with HTTP status 200 (OK)
      */
     @PostMapping("/login")
+    @ApiResponse(description = "Return the user ID of the logged in user.", responseCode = "200")
     public @ResponseBody
     ResponseEntity<String> login(@RequestBody User u){
         try{
