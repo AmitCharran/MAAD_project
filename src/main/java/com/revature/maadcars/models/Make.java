@@ -1,6 +1,7 @@
 package com.revature.maadcars.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,6 +28,7 @@ public class Make {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int make_id;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "make")
     private List<Model> models;
 

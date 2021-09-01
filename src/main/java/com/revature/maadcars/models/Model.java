@@ -1,5 +1,6 @@
 package com.revature.maadcars.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,6 +28,7 @@ public class Model {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int model_id;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "model")
     private List<Vehicle> vehicles;
 

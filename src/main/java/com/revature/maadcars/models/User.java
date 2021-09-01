@@ -1,5 +1,6 @@
 package com.revature.maadcars.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,7 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<Vehicle> vehicles;
 }
