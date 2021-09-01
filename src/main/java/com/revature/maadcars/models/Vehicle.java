@@ -1,7 +1,6 @@
 package com.revature.maadcars.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,7 +18,6 @@ import java.util.List;
 @Table(name="vehicles")
 @Getter @Setter
 @NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Vehicle {
     @Id
     @Column(name = "vehicle_id")
@@ -34,8 +32,8 @@ public class Vehicle {
     @JoinColumn(name = "model_id", referencedColumnName = "model_id", nullable = false)
     private Model model;
 
-    @JsonIgnore
     @OneToOne(mappedBy = "vehicle")
+    @JsonIgnore
     private Sale sale;
 
     @Column(name = "vin", unique = true, nullable = false)

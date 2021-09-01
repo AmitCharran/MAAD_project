@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -28,10 +28,10 @@ public class Sale {
     @JoinColumn(name = "vehicle_id", referencedColumnName = "vehicle_id")
     private Vehicle vehicle;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "sale")
+    @JsonIgnore
     private List<Bid> bids;
 
     @Column(name = "time_started")
-    private Time time_started;
+    private Timestamp time_started;
 }

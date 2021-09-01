@@ -28,8 +28,8 @@ public class Model {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int model_id;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "model")
+    @JsonIgnore
     private List<Vehicle> vehicles;
 
     @ManyToOne
