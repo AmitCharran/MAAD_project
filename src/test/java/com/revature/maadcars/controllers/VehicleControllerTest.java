@@ -80,7 +80,17 @@ class VehicleControllerTest {
     }
 
     @Test
-    void findVehicleById() {
+    void findVehicleById() throws Exception {
+        when(vehicleService.getVehicleByVehicleId(anyInt())).thenReturn(vehicle);
+
+        mockMvc.perform(get("/vehicles/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$.vehicle_id").value("1"))
+                .andExpect(jsonPath("$.vin").value("1234567890ABCDEFG"))
+                .andExpect(jsonPath("$.color").value("white"))
+                .andExpect(jsonPath("$._stolen").value("false"))
+                .andReturn();
     }
 
     /**

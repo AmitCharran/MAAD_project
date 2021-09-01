@@ -1,5 +1,6 @@
 package com.revature.maadcars.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,6 +33,7 @@ public class Vehicle {
     private Model model;
 
     @OneToMany(mappedBy = "vehicle")
+    @JsonIgnore
     private List<Sale> sales;
 
     @Column(name = "vin", unique = true, nullable = false)
