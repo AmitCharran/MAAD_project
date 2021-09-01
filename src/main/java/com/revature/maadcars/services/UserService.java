@@ -1,6 +1,5 @@
 package com.revature.maadcars.services;
 
-import com.revature.maadcars.controllers.VehicleController;
 import com.revature.maadcars.models.User;
 import com.revature.maadcars.repository.UserRepository;
 import org.slf4j.Logger;
@@ -16,8 +15,8 @@ import java.util.Optional;
  */
 @Service
 public class UserService {
-    private final UserRepository userRepository;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private final UserRepository userRepository;
 
     /**
      * Injects repository dependency
@@ -90,20 +89,23 @@ public class UserService {
         if(user.isPresent()){
             //Compare input to stored password
             if(password.equals(user.get().getPassword())){
+                logger.info(user.get().getUsername() + " has logged in.");
                 return user.get();
             }
             else{
+                logger.warn("Invalid login attempt for user " + username);
                 throw new RuntimeException();
             }
         }
         else{
+            logger.warn("Attempted login to nonexistent user " + username);
             throw new RuntimeException();
         }
     }
 
     /**
      * Takes a user Object and if the properties are valid for creation, then return true
-     * Valid = between 5-200 length and username does not exists in database
+     * Valid = between 5-200 length and username does not exist in database
      * @param u user we are checking
      * @return true or false
      */
@@ -126,3 +128,5 @@ public class UserService {
         }
     }
 }
+
+
