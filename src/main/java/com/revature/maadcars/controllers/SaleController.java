@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.maadcars.models.Sale;
 import com.revature.maadcars.models.SaleDTO;
+import com.revature.maadcars.models.Vehicle;
+import com.revature.maadcars.services.BidService;
 import com.revature.maadcars.services.SaleService;
 import com.revature.maadcars.services.VehicleService;
 import com.revature.maadcars.util.MaadCarsModelMapper;
@@ -24,6 +26,8 @@ import java.util.List;
 public class SaleController {
     @Autowired
     private VehicleService vehicleService;
+    @Autowired
+    private BidService bidService;
     private final SaleService saleService;
     /**
      * Injects service dependency
@@ -54,14 +58,24 @@ public class SaleController {
     /**
      * Maps POST Method to creation of a new persisted Sale based on request body.
      * @param saleDTO Sale object interpreted from request body.
-     * @return Persisted Sale.
+     * @return Status OK if Vehicle exists, other Status Bad Request
      */
     @PostMapping
     public @ResponseBody
     ResponseEntity<String> createSale(@RequestBody SaleDTO saleDTO) throws JsonProcessingException {
-        Sale sale = SaleDTO.convertToEntity(saleDTO, vehicleService);
+        try {
+            List<Sale> sales = getAllSales();
+            for(Sale s: sales){
+                if( s.getVehicle() != null && s.getVehicle().getVehicle_id() == saleDTO.getVehicle_id()){
+                    throw new IllegalArgumentException("Vehicle already on sale");
+                }
+            }
 
-        return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(saleService.saveSale(sale)));
+            Sale sale = SaleDTO.convertToEntity(saleDTO, vehicleService, bidService);
+            return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(saleService.saveSale(sale)));
+        }catch (IllegalArgumentException exception){
+            return ResponseEntity.badRequest().body(exception.getMessage());
+        }
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.revature.maadcars.services;
 
 import com.revature.maadcars.models.Sale;
+import com.revature.maadcars.models.Vehicle;
 import com.revature.maadcars.repository.SaleRepository;
 import com.revature.maadcars.repository.VehicleRepository;
 import org.slf4j.Logger;
@@ -62,14 +63,22 @@ public class SaleService {
         saleRepository.findById(saleId).ifPresent(saleRepository::delete);
     }
 
+
+
+    /**
+     * Check to see if vehicle exists within the DB
+     * @param sale uses the vehicle object within sale to identify if it exists
+     * @return true if vehicle exists or throws an IllegalArgumentException
+     */
     private boolean vehicleExists(Sale sale){
-        if(vehicleRepository.existsById(sale.getVehicle().getVehicle_id())){
-            logger.info("Sale is being created for vehicle: " + sale.getVehicle());
-            return true;
-        }else{
+        if(sale.getVehicle() == null || !vehicleRepository.existsById(sale.getVehicle().getVehicle_id())){
             logger.warn("Cannot create Sale because vehicle does not exists");
             throw new IllegalArgumentException("Vehicle does not exists");
+        }else{
+            logger.info("Sale is being created for vehicle: " + sale.getVehicle());
+            return true;
 
         }
     }
+
 }

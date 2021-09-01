@@ -33,7 +33,7 @@ public class VehicleService {
      * @return Vehicle row (only one)
      */
     public Vehicle getVehicleByVehicleId(Integer id){
-        return vehicleRepository.findById(id).orElseThrow(RuntimeException::new);
+        return vehicleRepository.findById(id).orElse(null);
     }
 
     /**
@@ -58,4 +58,5 @@ public class VehicleService {
     public void deleteVehicle(Integer vehicleId){
         vehicleRepository.findById(vehicleId).ifPresent(vehicleRepository::delete);
     }
+
 }

@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 class VehicleServiceTest {
@@ -89,6 +88,23 @@ class VehicleServiceTest {
     }
 
     @Test
-    void deleteVehicle() {
+    void deleteVehicle_VerifyRepositoryDeleteCall() {
+        when(vehicleRepositoryMock.findById(1)).thenReturn(Optional.of(vehicle));
+
+        service.deleteVehicle(1);
+
+        verify(vehicleRepositoryMock).delete(vehicle);
+        logger.trace("Test passed: deleteVehicle_VerifyRepositoryCall");
     }
+
+    @Test
+    void deleteVehicle_VehicleIdNotFound_VerifyNoRepositoryDeleteCall() {
+        when(vehicleRepositoryMock.findById(1)).thenReturn(Optional.empty());
+
+        service.deleteVehicle(1);
+
+        verify(vehicleRepositoryMock, never()).delete(vehicle);
+        logger.trace("Test passed: deleteVehicle_VehicleIdNotFound_VerifyNoRepositoryDeleteCall");
+    }
+
 }

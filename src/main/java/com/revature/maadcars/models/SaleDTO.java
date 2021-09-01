@@ -1,48 +1,51 @@
 package com.revature.maadcars.models;
+import com.revature.maadcars.repository.BidRepository;
+import com.revature.maadcars.services.BidService;
 import com.revature.maadcars.services.VehicleService;
 import com.revature.maadcars.util.MaadCarsModelMapper;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.modelmapper.ModelMapper;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * SaleDTO: This class will take JSON objects with int values for vehicle_id
  * and is used to access the Vehicle Object for
  */
+@Setter
+@Getter
+@NoArgsConstructor
 public class SaleDTO {
 
     private int sale_id;
     private int vehicle_id;
+    private int bid_id;
     private Timestamp time_started;
 
+    
 
-    public SaleDTO(){
-    }
-
-    public int getSale_id() {
-        return sale_id;
-    }
-
-    public void setSale_id(int sale_id) {
-        this.sale_id = sale_id;
-    }
-
-    public Vehicle getVehicle(VehicleService vehicleService) {
+    /**
+     * Returns the vehicle object by giving the vehicle_id
+     * @param vehicleService used to access vehicle object
+     * @return Vehicle Object or null (if id does not exists)
+     */
+    public Vehicle getVehicleObject(VehicleService vehicleService) {
         return vehicleService.getVehicleByVehicleId(vehicle_id);
     }
 
-    public void setVehicle_id(int vehicleId) {
-        vehicle_id = vehicleId;
-
+    /**
+     * get bid by bidID
+     * @param bidService used to access bid objects
+     * @return bid Object
+     */
+    public Bid getBidObject(BidService bidService){
+        return bidService.getBidByBidId(bid_id);
     }
-
-    public Timestamp getTime_started() {
-        return time_started;
-    }
-
-    public void setTime_started(Timestamp time_started) {
-        this.time_started = time_started;
-    }
+    
 
     /**
      * Converts DTO using a ModelMapper to Sale entity.
@@ -51,10 +54,31 @@ public class SaleDTO {
      * @param vehicleService used to access the vehicle database for Vehicle Object
      * @return Sale object
      */
-    public static Sale convertToEntity(SaleDTO saleDTO, VehicleService vehicleService) {
+    public static Sale convertToEntity(SaleDTO saleDTO, VehicleService vehicleService, BidService bidService) {
         ModelMapper modelMapper = MaadCarsModelMapper.modelMapper();
         Sale sale = modelMapper.map(saleDTO, Sale.class);
-        sale.setVehicle(saleDTO.getVehicle(vehicleService));
+
+        Vehicle vehicle =  saleDTO.getVehicleObject(vehicleService);
+        if(vehicle != null) {
+            sale.setVehicle(saleDTO.getVehicleObject(vehicleService));
+        }else{
+            //TODO: log vehicle does not exists
+            throw new IllegalArgumentException("Vehicle does not exists. Must create vehicle first");
+        }
+
+
+
+        Bid bid = bidService.getBidByBidId(saleDTO.getBid_id());
+        if(bid == null){
+            // TODO: log bid does not exists
+            throw new IllegalArgumentException("bid does not exists");
+        }
+        if(sale.getBids() != null) {
+            sale.getBids().add(bidService.getBidByBidId(saleDTO.getBid_id()));
+        }else{
+            sale.setBids(new ArrayList<>());
+            sale.getBids().add(bidService.getBidByBidId(saleDTO.getBid_id()));
+        }
         return sale;
     }
 

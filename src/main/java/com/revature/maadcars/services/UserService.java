@@ -16,8 +16,8 @@ import java.util.Optional;
  */
 @Service
 public class UserService {
-    private final UserRepository userRepository;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private final UserRepository userRepository;
 
     /**
      * Injects repository dependency
@@ -90,20 +90,23 @@ public class UserService {
         if(user.isPresent()){
             //Compare input to stored password
             if(password.equals(user.get().getPassword())){
+                logger.info(user.get().getUsername() + " has logged in.");
                 return user.get();
             }
             else{
+                logger.warn("Invalid login attempt for user " + username);
                 throw new RuntimeException();
             }
         }
         else{
+            logger.warn("Attempted login to nonexistent user " + username);
             throw new RuntimeException();
         }
     }
 
     /**
      * Takes a user Object and if the properties are valid for creation, then return true
-     * Valid = between 5-200 length and username does not exists in database
+     * Valid = between 5-200 length and username does not exist in database
      * @param u user we are checking
      * @return true or false
      */
@@ -112,17 +115,19 @@ public class UserService {
         if(userRepository.findByUsername(u.getUsername()).isPresent()){
             logger.warn("Username " + u.getUsername() + " already exists");
             throw new IllegalArgumentException("Username " + u.getUsername() + " already exists");
-
         }else if(passwordLength < 5 || passwordLength > 200){
-            logger.warn("Password length incorrect");
-            if(passwordLength < 5) {
-                throw new IllegalArgumentException("password length needs to be greater than 5");
+            if(passwordLength < 5){
+                logger.warn("Password length < 5");
+                throw new IllegalArgumentException("Password length cannot be less than 5");
             }else{
-                throw new IllegalArgumentException("password length needs to be less than 200");
+                logger.warn("Password length > 200");
+                throw new IllegalArgumentException("Password length cannot be more than 200");
             }
         }else{
-            logger.info("User is good for creation!");
+            logger.info("User with username " + u.getUsername() + " is good for creation");
             return true;
         }
     }
 }
+
+
