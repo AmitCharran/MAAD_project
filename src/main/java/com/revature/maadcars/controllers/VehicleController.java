@@ -97,7 +97,7 @@ public class VehicleController {
         /*Vehicle objInput = new ObjectMapper().readValue(strJson, Vehicle.class);
         objInput.setUser(userService.getUserByUserId(Integer.parseInt(current_user_id)));
         objInput.setModel(modelService.getModelByModelId(vDto.getModel_id()));*/
-        Vehicle objInput = vDto.toObject(userService, modelService, saleService);
+        Vehicle objInput = vDto.convertToEntity(userService, modelService, saleService);
 
         Vehicle objInserted = vehicleService.saveVehicle(objInput);
         String strResponseJson = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(objInserted);
