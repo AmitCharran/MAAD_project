@@ -31,8 +31,8 @@ public class VehicleController {
         this.vehicleService = vehicleService;
     }
     /**
-     * Maps "GET Vehicles/" to return a list of all Vehicles in database.
-     * @return List<Vehicle>
+     * Maps "GET Vehicles/" to return a JSON string list of all Vehicles in database.
+     * @return ResponseEntity<String>
      */
     @GetMapping
     public @ResponseBody
@@ -44,9 +44,9 @@ public class VehicleController {
         return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(vehicles));
     }
     /**
-     * Maps "GET Vehicles/{id}" to return the Vehicle with that Vehicle_id.
+     * Maps "GET Vehicles/{id}" to return the JSON string Vehicle with that Vehicle_id.
      * @param id = {id} (int)
-     * @return Vehicle
+     * @return ResponseEntity<String>
      */
     @GetMapping("/{id}") // /vehicles/9
     public @ResponseBody
