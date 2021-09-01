@@ -36,8 +36,12 @@ public class VehicleController {
      */
     @GetMapping
     public @ResponseBody
-    List<Vehicle> getAllVehicles(){
-        return vehicleService.getAllVehicles();
+    ResponseEntity<String> getAllVehicles() throws JsonProcessingException {
+        List<Vehicle> vehicles = vehicleService.getAllVehicles();
+        if(vehicles.isEmpty()){
+            return ResponseEntity.ok().body("No results found matching your search.");
+        }
+        return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(vehicles));
     }
     /**
      * Maps "GET Vehicles/{id}" to return the Vehicle with that Vehicle_id.
@@ -47,7 +51,11 @@ public class VehicleController {
     @GetMapping("/{id}") // /vehicles/9
     public @ResponseBody
     ResponseEntity<String> findVehicleById(@PathVariable String id) throws JsonProcessingException {
-        return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(vehicleService.getVehicleByVehicleId(Integer.parseInt(id))));
+        Vehicle v = vehicleService.getVehicleByVehicleId(Integer.parseInt(id));
+        if(v == null){
+            return ResponseEntity.ok().body("No results found matching your search.");
+        }
+        return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(v));
     }
     /**
      * Maps POST Method to creation of a new persisted Vehicle based on request body.
