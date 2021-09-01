@@ -76,7 +76,17 @@ class VehicleControllerTest {
     }
 
     @Test
-    void getAllVehicles() {
+    void getAllVehicles() throws Exception {
+        when(vehicleService.getAllVehicles()).thenReturn(vehicles);
+
+        mockMvc.perform(get("/vehicles"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$[0].vehicle_id").value("1"))
+                .andExpect(jsonPath("$[0].vin").value("1234567890ABCDEFG"))
+                .andExpect(jsonPath("$[0].color").value("white"))
+                .andExpect(jsonPath("$[0]._stolen").value("false"))
+                .andReturn();
     }
 
     @Test
@@ -182,6 +192,10 @@ class VehicleControllerTest {
     }
 
     @Test
-    void deleteVehicle() {
+    void deleteVehicle() throws Exception {
+
+        mockMvc.perform(delete("/vehicles"))
+                .andExpect(status().isOk())
+                .andReturn();
     }
 }
