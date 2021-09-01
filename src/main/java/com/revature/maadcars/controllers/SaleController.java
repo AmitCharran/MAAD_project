@@ -1,7 +1,14 @@
 package com.revature.maadcars.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.maadcars.models.Sale;
+import com.revature.maadcars.models.SaleDTO;
+import com.revature.maadcars.services.BidService;
 import com.revature.maadcars.services.SaleService;
+import com.revature.maadcars.services.VehicleService;
+import com.revature.maadcars.util.MaadCarsModelMapper;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +23,10 @@ import java.util.List;
 @Controller
 @RequestMapping("sales")
 public class SaleController {
+    @Autowired
+    private VehicleService vehicleService;
+    @Autowired
+    private BidService bidService;
     private final SaleService saleService;
     /**
      * Injects service dependency
@@ -45,14 +56,17 @@ public class SaleController {
     }
     /**
      * Maps POST Method to creation of a new persisted Sale based on request body.
-     * @param s Sale object interpreted from request body.
+     * @param saleDTO Sale object interpreted from request body.
      * @return Persisted Sale.
      */
     @PostMapping
     public @ResponseBody
-    Sale createSale(@RequestBody Sale s){
-        return saleService.saveSale(s);
+    ResponseEntity<String> createSale(@RequestBody SaleDTO saleDTO) throws JsonProcessingException {
+        Sale sale = convertToEntity(saleDTO);
+
+        return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(sale));
     }
+
     /**
      * Maps PUT Method to updating and persisting the Sale that matches the request body.
      * @param s Sale object interpreted from request body.
@@ -73,5 +87,14 @@ public class SaleController {
     ResponseEntity<HttpStatus> deleteSale(@PathVariable String id){
         saleService.deleteSale(Integer.parseInt(id));
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    private Sale convertToEntity(SaleDTO saleDTO) {
+        ModelMapper modelMapper = MaadCarsModelMapper.modelMapper();
+        Sale sale = modelMapper.map(saleDTO, Sale.class);
+        sale.setVehicle(saleDTO.getVehicle(vehicleService));
+        sale.setBids(saleDTO.getBids(bidService));
+        return sale;
+
     }
 }

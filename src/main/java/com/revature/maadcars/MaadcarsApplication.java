@@ -10,4 +10,6 @@ public class MaadcarsApplication {
 		SpringApplication.run(MaadcarsApplication.class, args);
 	}
 
+
 }
+

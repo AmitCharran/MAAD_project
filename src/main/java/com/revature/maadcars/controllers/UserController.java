@@ -70,7 +70,11 @@ public class UserController {
     @PostMapping
     public @ResponseBody
     ResponseEntity<String> createUser(@RequestBody User u) throws JsonProcessingException {
-        return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(userService.saveUser(u)));
+        try {
+            return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(userService.saveUser(u)));
+        }catch (IllegalArgumentException exception){
+            return ResponseEntity.badRequest().body(exception.getMessage());
+        }
     }
 
     /**
