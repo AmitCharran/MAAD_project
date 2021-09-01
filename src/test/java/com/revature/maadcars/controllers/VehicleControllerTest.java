@@ -193,7 +193,7 @@ class VehicleControllerTest {
 
     @Test
     void deleteVehicle() throws Exception {
-
+        
         mockMvc.perform(delete("/vehicles"))
                 .andExpect(status().isOk())
                 .andReturn();
