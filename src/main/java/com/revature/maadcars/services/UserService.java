@@ -1,5 +1,6 @@
 package com.revature.maadcars.services;
 
+import com.revature.maadcars.controllers.VehicleController;
 import com.revature.maadcars.models.User;
 import com.revature.maadcars.repository.UserRepository;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import java.util.Optional;
 public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     /**
      * Injects repository dependency
@@ -112,13 +114,18 @@ public class UserService {
     public boolean userIsGoodForCreation(User u){
         int passwordLength = u.getPassword().length();
         if(userRepository.findByUsername(u.getUsername()).isPresent()){
-            //TODO log user already exists
-            return false;
+            logger.warn("Username " + u.getUsername() + " already exists");
+            throw new IllegalArgumentException("Username " + u.getUsername() + " already exists");
         }else if(passwordLength < 5 || passwordLength > 200){
-            //TODO password length log password length
-            return false;
+            if(passwordLength < 5){
+                logger.warn("Password length < 5");
+                throw new IllegalArgumentException("Password length cannot be less than 5");
+            }else{
+                logger.warn("Password length > 200");
+                throw new IllegalArgumentException("Password length cannot be more than 200");
+            }
         }else{
-            //TODO password and username is good
+            logger.info("User with username " + u.getUsername() + " is good for creation");
             return true;
         }
     }
