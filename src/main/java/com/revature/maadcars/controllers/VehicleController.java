@@ -3,6 +3,10 @@ package com.revature.maadcars.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.maadcars.models.Vehicle;
+import com.revature.maadcars.models.VehicleDTO;
+import com.revature.maadcars.services.ModelService;
+import com.revature.maadcars.services.SaleService;
+import com.revature.maadcars.services.UserService;
 import com.revature.maadcars.services.VehicleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,13 +27,20 @@ public class VehicleController {
     private static final Logger logger = LoggerFactory.getLogger(VehicleController.class);
 
     private final VehicleService vehicleService;
+    private final UserService userService;
+    private final ModelService modelService;
+    private final SaleService saleService;
     /**
      * Injects service dependency
      */
     @Autowired
-    public VehicleController(VehicleService vehicleService){
+    public VehicleController(VehicleService vehicleService, UserService userService, ModelService modelService, SaleService saleService){
         this.vehicleService = vehicleService;
+        this.userService = userService;
+        this.modelService = modelService;
+        this.saleService = saleService;
     }
+
     /**
      * Maps "GET Vehicles/" to return a list of all Vehicles in database.
      * @return List<Vehicle>
@@ -108,5 +119,28 @@ public class VehicleController {
     ResponseEntity<HttpStatus> deleteVehicle(@PathVariable String id){
         vehicleService.deleteVehicle(Integer.parseInt(id));
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    /**
+     * Maps "PUT vehicles/transfer/{vehicle_id}/to/{new_user_id}"
+     * @param vehicle_id Vehicle being updated
+     * @param new_user_id the User that will be the new owner
+     * @param current_user_id currently logged in User
+     * @return Vehicle DTO with the new User ID
+     */
+    @PutMapping("/transfer/{vehicle_id}/to/{new_user_id}")
+    public @ResponseBody
+    ResponseEntity<VehicleDTO> transfer(@PathVariable String vehicle_id,
+                                        @PathVariable String new_user_id,
+                                        @RequestHeader(name = "current_user_id") String current_user_id){
+        try {
+            Vehicle vehicleWithNewOwner = vehicleService.transferVehicle(Integer.parseInt(vehicle_id), Integer.parseInt(current_user_id), Integer.parseInt(new_user_id));
+            VehicleDTO vehicleDTO = VehicleDTO.convertToDto(vehicleWithNewOwner, userService, modelService, saleService);
+            return new ResponseEntity<VehicleDTO>(vehicleDTO, HttpStatus.OK);
+        } catch (IllegalAccessException e) {
+            logger.warn(e.getMessage(), e);
+            logger.trace(e.getStackTrace().toString());
+            return new ResponseEntity<VehicleDTO>(HttpStatus.BAD_REQUEST);
+        }
     }
 }

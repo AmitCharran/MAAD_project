@@ -22,6 +22,7 @@ class VehicleServiceTest {
 
     Vehicle vehicle;
     VehicleRepository vehicleRepositoryMock;
+    UserService userServiceMock;
 
     VehicleService service;
 
@@ -37,7 +38,8 @@ class VehicleServiceTest {
 
         vehicle = Mockito.mock(Vehicle.class);
         vehicleRepositoryMock = Mockito.mock(VehicleRepository.class);
-        service = new VehicleService(vehicleRepositoryMock);
+        userServiceMock = Mockito.mock(UserService.class);
+        service = new VehicleService(vehicleRepositoryMock, userServiceMock);
     }
 
     /**
