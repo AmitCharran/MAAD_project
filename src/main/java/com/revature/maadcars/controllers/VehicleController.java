@@ -61,8 +61,9 @@ public class VehicleController {
     }
     /**
      * Maps POST Method to creation of a new persisted Vehicle based on request body.
-     * Includes check to throw exceptions if a vehicle with the same VIN is already in the database, or if VIN of vehicle provided is not exactly 17 chars long.
-     * @param vDto Vehicle object interpreted from request body.
+     * Includes input validation checks on VIN, model ID and whether user is logged in.
+     * @param vDto (VehicleDTO) DTO of Vehicle object passed in request body.
+     * @param current_user_id (String) Value of "user_id" request header.
      * @return ResponseEntity with status code 200 OK and Json of inserted Vehicle if successful, or a 4xx status code with error message in response body if input fails validation.
      */
     @PostMapping
@@ -81,24 +82,20 @@ public class VehicleController {
                 logger.info("Attempted to insert vehicle with invalid VIN: " + vDto.getVin() + " and failed.");
                 return ResponseEntity.badRequest().body("Vehicle Identification Number must be exactly 17 characters long!");
             }
+            if (current_user_id == null || current_user_id.isEmpty() || userService.getUserByUserId(Integer.parseInt(current_user_id)) == null) {
+                logger.trace("Attempted to insert a vehicle while user is not logged in as an extant user.");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             logger.warn(e.getMessage());
             logger.warn(Arrays.toString(e.getStackTrace()));
             return ResponseEntity.unprocessableEntity().body(e.getMessage());
         }
-        if (current_user_id == null || current_user_id.isEmpty() || userService.getUserByUserId(Integer.parseInt(current_user_id)) == null) {
-            logger.trace("Attempted to insert a vehicle while user is not logged in as an extant user.");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
         logger.trace("Got past input validation for createVehicle! Json dump of VehicleDTO's current state below:");
         String strJson = new ObjectMapper().writeValueAsString(vDto);
         logger.trace(strJson);
-        /*Vehicle objInput = new ObjectMapper().readValue(strJson, Vehicle.class);
-        objInput.setUser(userService.getUserByUserId(Integer.parseInt(current_user_id)));
-        objInput.setModel(modelService.getModelByModelId(vDto.getModel_id()));*/
         Vehicle objInput = vDto.convertToEntity(userService, modelService, saleService);
-
         Vehicle objInserted = vehicleService.saveVehicle(objInput);
         String strResponseJson = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(objInserted);
         logger.trace("Successfully inserted new Vehicle; assigned ID: " + objInserted.getVehicle_id());
