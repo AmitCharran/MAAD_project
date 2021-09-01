@@ -1,5 +1,7 @@
 package com.revature.maadcars.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,6 +17,7 @@ import java.util.List;
 @Table(name="users")
 @Getter @Setter
 @NoArgsConstructor
+@EqualsAndHashCode
 public class User {
     @Id
     @Column(name = "user_id")
@@ -28,5 +31,19 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Vehicle> vehicles;
+
+    @OneToMany(mappedBy = "bid")
+    @JsonIgnore
+    private List<Bid> bids;
+
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
+    @Column(name = "email")
+    private String email;
 }

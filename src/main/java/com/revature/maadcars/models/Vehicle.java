@@ -1,5 +1,6 @@
 package com.revature.maadcars.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,8 +32,9 @@ public class Vehicle {
     @JoinColumn(name = "model_id", referencedColumnName = "model_id", nullable = false)
     private Model model;
 
-    @OneToMany(mappedBy = "vehicle")
-    private List<Sale> sales;
+    @OneToOne(mappedBy = "vehicle")
+    @JsonIgnore
+    private Sale sale;
 
     @Column(name = "vin", unique = true, nullable = false)
     private String vin;
@@ -43,6 +45,6 @@ public class Vehicle {
     @Column(name = "is_stolen", columnDefinition = "boolean not null default false")
     private boolean is_stolen;
 
-    //@Column(name = "description")
-    //private String description;
+    @Column(name = "description")
+    private String description;
 }

@@ -19,10 +19,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletResponse;
-
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -56,7 +54,6 @@ class VehicleControllerTest {
     static void beforeAll() {
         logger.trace("Now running VehicleController unit tests...");
     }
-  
     /**
      * On startup: setup MockMvc, create a test vehicle by injecting blank a mock user and model into its foreign keys fields, then finally adding it to a mock list of all vehicles.
      */
@@ -79,11 +76,31 @@ class VehicleControllerTest {
     }
 
     @Test
-    void getAllVehicles() {
+    void getAllVehicles() throws Exception {
+        when(vehicleService.getAllVehicles()).thenReturn(vehicles);
+
+        mockMvc.perform(get("/vehicles"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$[0].vehicle_id").value("1"))
+                .andExpect(jsonPath("$[0].vin").value("1234567890ABCDEFG"))
+                .andExpect(jsonPath("$[0].color").value("white"))
+                .andExpect(jsonPath("$[0]._stolen").value("false"))
+                .andReturn();
     }
 
     @Test
-    void findVehicleById() {
+    void findVehicleById() throws Exception {
+        when(vehicleService.getVehicleByVehicleId(anyInt())).thenReturn(vehicle);
+
+        mockMvc.perform(get("/vehicles/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$.vehicle_id").value("1"))
+                .andExpect(jsonPath("$.vin").value("1234567890ABCDEFG"))
+                .andExpect(jsonPath("$.color").value("white"))
+                .andExpect(jsonPath("$._stolen").value("false"))
+                .andReturn();
     }
 
     /**
@@ -99,6 +116,7 @@ class VehicleControllerTest {
         mockMvc.perform(post("/vehicles")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(vehicle)))
+
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists())
                 .andExpect(jsonPath("$.vehicle_id").value("1"))
@@ -158,7 +176,7 @@ class VehicleControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists())
                 .andExpect(jsonPath("$.vehicle_id").value("1"))
-                .andExpect(jsonPath("$.vin").value("1234567890asdfghj"))
+                .andExpect(jsonPath("$.vin").value("1234567890ABCDEFG"))
                 .andReturn();
     }
 
@@ -174,6 +192,10 @@ class VehicleControllerTest {
     }
 
     @Test
-    void deleteVehicle() {
+    void deleteVehicle() throws Exception {
+
+        mockMvc.perform(delete("/vehicles"))
+                .andExpect(status().isOk())
+                .andReturn();
     }
 }

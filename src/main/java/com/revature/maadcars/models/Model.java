@@ -30,6 +30,7 @@ public class Model {
 
     @JsonIgnore
     @OneToMany(mappedBy = "model")
+    @JsonIgnore
     private List<Vehicle> vehicles;
 
     @ManyToOne
