@@ -1,6 +1,5 @@
 package com.revature.maadcars.services;
 
-import com.revature.maadcars.controllers.VehicleController;
 import com.revature.maadcars.models.User;
 import com.revature.maadcars.repository.UserRepository;
 import org.slf4j.Logger;
@@ -18,7 +17,6 @@ import java.util.Optional;
 public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     /**
      * Injects repository dependency

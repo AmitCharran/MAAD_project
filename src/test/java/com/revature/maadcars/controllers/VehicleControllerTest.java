@@ -79,11 +79,53 @@ class VehicleControllerTest {
     }
 
     @Test
-    void getAllVehicles() {
+    void shouldReturnAllVehiclesWhenGetAllVehicles() throws Exception {
+        when(vehicleService.getAllVehicles()).thenReturn(vehicles);
+
+        mockMvc.perform(get("/vehicles"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$[0].vehicle_id").value("1"))
+                .andExpect(jsonPath("$[0].vin").value("1234567890ABCDEFG"))
+                .andExpect(jsonPath("$[0].color").value("white"))
+                .andExpect(jsonPath("$[0]._stolen").value("false"))
+                .andReturn();
     }
 
     @Test
-    void findVehicleById() {
+    void shouldReturnNoResultMessageWhenGetAllVehiclesIsEmpty() throws Exception {
+        when(vehicleService.getAllVehicles()).thenReturn(new ArrayList<>());
+
+        mockMvc.perform(get("/vehicles"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$").value("No results found matching your search."))
+                .andReturn();
+    }
+
+    @Test
+    void shouldReturnVehicleWhenFindVehicleById() throws Exception {
+        when(vehicleService.getVehicleByVehicleId(anyInt())).thenReturn(vehicle);
+
+        mockMvc.perform(get("/vehicles/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$.vehicle_id").value("1"))
+                .andExpect(jsonPath("$.vin").value("1234567890ABCDEFG"))
+                .andExpect(jsonPath("$.color").value("white"))
+                .andExpect(jsonPath("$._stolen").value("false"))
+                .andReturn();
+    }
+
+    @Test
+    void shouldReturnNoResultsMessageWhenFindVehicleByIdIsEmpty() throws Exception {
+        when(vehicleService.getVehicleByVehicleId(anyInt())).thenReturn(null);
+
+        mockMvc.perform(get("/vehicles/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$").value("No results found matching your search."))
+                .andReturn();
     }
 
     /**

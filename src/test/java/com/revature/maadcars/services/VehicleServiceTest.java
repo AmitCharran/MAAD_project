@@ -9,6 +9,8 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,6 +20,7 @@ class VehicleServiceTest {
     private static final Logger logger = LoggerFactory.getLogger(VehicleServiceTest.class);
 
     Vehicle vehicle;
+    List<Vehicle> vehicles;
     VehicleRepository vehicleRepositoryMock;
 
     VehicleService service;
@@ -33,6 +36,8 @@ class VehicleServiceTest {
 
 
         vehicle = Mockito.mock(Vehicle.class);
+        vehicles = new ArrayList<>();
+        vehicles.add(vehicle);
         vehicleRepositoryMock = Mockito.mock(VehicleRepository.class);
         service = new VehicleService(vehicleRepositoryMock);
     }
@@ -48,7 +53,7 @@ class VehicleServiceTest {
 
     @Test
     void getVehicleByVehicleId() {
-        when(vehicleRepositoryMock.findById(anyInt())).thenReturn(java.util.Optional.ofNullable(vehicle));
+        when(vehicleRepositoryMock.findById(anyInt())).thenReturn(Optional.ofNullable(vehicle));
 
         Vehicle veh = service.getVehicleByVehicleId(1);
 
@@ -85,6 +90,11 @@ class VehicleServiceTest {
 
     @Test
     void getAllVehicles() {
+        when(vehicleRepositoryMock.findAll()).thenReturn(vehicles);
+
+        List<Vehicle> veh = service.getAllVehicles();
+
+        assertEquals(vehicles, veh);
     }
 
     @Test

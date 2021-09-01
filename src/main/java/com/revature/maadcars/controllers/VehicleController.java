@@ -31,23 +31,31 @@ public class VehicleController {
         this.vehicleService = vehicleService;
     }
     /**
-     * Maps "GET Vehicles/" to return a list of all Vehicles in database.
-     * @return List<Vehicle>
+     * Maps "GET Vehicles/" to return a JSON string list of all Vehicles in database.
+     * @return ResponseEntity<String>
      */
     @GetMapping
     public @ResponseBody
-    List<Vehicle> getAllVehicles(){
-        return vehicleService.getAllVehicles();
+    ResponseEntity<String> getAllVehicles() throws JsonProcessingException {
+        List<Vehicle> vehicles = vehicleService.getAllVehicles();
+        if(vehicles.isEmpty()){
+            return ResponseEntity.ok().body("No results found matching your search.");
+        }
+        return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(vehicles));
     }
     /**
-     * Maps "GET Vehicles/{id}" to return the Vehicle with that Vehicle_id.
+     * Maps "GET Vehicles/{id}" to return the JSON string Vehicle with that Vehicle_id.
      * @param id = {id} (int)
-     * @return Vehicle
+     * @return ResponseEntity<String>
      */
     @GetMapping("/{id}") // /vehicles/9
     public @ResponseBody
-    Vehicle findVehicleById(@PathVariable String id){
-        return vehicleService.getVehicleByVehicleId(Integer.parseInt(id));
+    ResponseEntity<String> findVehicleById(@PathVariable String id) throws JsonProcessingException {
+        Vehicle v = vehicleService.getVehicleByVehicleId(Integer.parseInt(id));
+        if(v == null){
+            return ResponseEntity.ok().body("No results found matching your search.");
+        }
+        return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(v));
     }
     /**
      * Maps POST Method to creation of a new persisted Vehicle based on request body.
