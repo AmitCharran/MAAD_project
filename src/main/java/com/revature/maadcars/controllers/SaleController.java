@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.maadcars.models.Sale;
 import com.revature.maadcars.models.SaleDTO;
-import com.revature.maadcars.services.BidService;
 import com.revature.maadcars.services.SaleService;
 import com.revature.maadcars.services.VehicleService;
 import com.revature.maadcars.util.MaadCarsModelMapper;
@@ -25,8 +24,6 @@ import java.util.List;
 public class SaleController {
     @Autowired
     private VehicleService vehicleService;
-    @Autowired
-    private BidService bidService;
     private final SaleService saleService;
     /**
      * Injects service dependency
@@ -62,9 +59,9 @@ public class SaleController {
     @PostMapping
     public @ResponseBody
     ResponseEntity<String> createSale(@RequestBody SaleDTO saleDTO) throws JsonProcessingException {
-        Sale sale = convertToEntity(saleDTO);
+        Sale sale = SaleDTO.convertToEntity(saleDTO, vehicleService);
 
-        return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(sale));
+        return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(saleService.saveSale(sale)));
     }
 
     /**
@@ -89,12 +86,4 @@ public class SaleController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    private Sale convertToEntity(SaleDTO saleDTO) {
-        ModelMapper modelMapper = MaadCarsModelMapper.modelMapper();
-        Sale sale = modelMapper.map(saleDTO, Sale.class);
-        sale.setVehicle(saleDTO.getVehicle(vehicleService));
-        sale.setBids(saleDTO.getBids(bidService));
-        return sale;
-
-    }
 }
