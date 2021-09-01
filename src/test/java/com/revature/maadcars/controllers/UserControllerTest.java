@@ -67,8 +67,8 @@ class UserControllerTest {
         when(userService.saveUser(any(User.class))).thenReturn(user);
 
         mockMvc.perform(post("/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(user)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(user)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists())
                 .andExpect(jsonPath("$.user_id").value(1))
@@ -87,5 +87,4 @@ class UserControllerTest {
                 .andExpect(status().isBadRequest())
                 .andReturn();
     }
-
 }
