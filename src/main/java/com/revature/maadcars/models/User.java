@@ -30,7 +30,20 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Vehicle> vehicles;
+
+    @OneToMany(mappedBy = "bid")
+    @JsonIgnore
+    private List<Bid> bids;
+
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
+    @Column(name = "email")
+    private String email;
 }

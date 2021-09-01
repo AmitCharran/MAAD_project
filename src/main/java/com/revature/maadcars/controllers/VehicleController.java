@@ -56,8 +56,8 @@ public class VehicleController {
      */
     @GetMapping("/{id}") // /vehicles/9
     public @ResponseBody
-    Vehicle findVehicleById(@PathVariable String id){
-        return vehicleService.getVehicleByVehicleId(Integer.parseInt(id));
+    ResponseEntity<String> findVehicleById(@PathVariable String id) throws JsonProcessingException {
+        return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(vehicleService.getVehicleByVehicleId(Integer.parseInt(id))));
     }
     /**
      * Maps POST Method to creation of a new persisted Vehicle based on request body.

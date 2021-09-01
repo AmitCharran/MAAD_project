@@ -28,8 +28,8 @@ public class Make {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int make_id;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "make")
+    @JsonIgnore
     private List<Model> models;
 
     @Column(name = "name", nullable = false)
