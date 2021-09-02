@@ -33,8 +33,6 @@ class VehicleServiceTest {
   
     @BeforeEach
     void setUp() {
-
-
         vehicle = Mockito.mock(Vehicle.class);
         vehicles = new ArrayList<>();
         vehicles.add(vehicle);
