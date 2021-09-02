@@ -1,5 +1,6 @@
 package com.revature.maadcars.services;
 
+import com.revature.maadcars.models.User;
 import com.revature.maadcars.models.Vehicle;
 import com.revature.maadcars.repository.VehicleRepository;
 import org.junit.jupiter.api.BeforeAll;
@@ -22,9 +23,11 @@ class VehicleServiceTest {
     Vehicle vehicle;
     List<Vehicle> vehicles;
     VehicleRepository vehicleRepositoryMock;
+    UserService userServiceMock;
 
     VehicleService service;
 
+    User user;
 
     @BeforeAll
     static void beforeAll() {
@@ -37,7 +40,10 @@ class VehicleServiceTest {
         vehicles = new ArrayList<>();
         vehicles.add(vehicle);
         vehicleRepositoryMock = Mockito.mock(VehicleRepository.class);
-        service = new VehicleService(vehicleRepositoryMock);
+        userServiceMock = Mockito.mock(UserService.class);
+        service = new VehicleService(vehicleRepositoryMock, userServiceMock);
+
+        user = Mockito.mock(User.class);
     }
 
     @Test
@@ -115,4 +121,49 @@ class VehicleServiceTest {
         logger.trace("Test passed: deleteVehicle_VehicleIdNotFound_VerifyNoRepositoryDeleteCall");
     }
 
+    @Test
+    void transferVehicle() throws IllegalAccessException{
+        when(vehicleRepositoryMock.findById(anyInt())).thenReturn(Optional.of(vehicle));
+        when(vehicle.getUser()).thenReturn(user);
+        when(vehicle.getUser().getUser_id()).thenReturn(1);
+        when(userServiceMock.getUserByUserId(anyInt())).thenReturn(user);
+        when(vehicleRepositoryMock.save(any(Vehicle.class))).thenReturn(vehicle);
+
+        Vehicle updatedVehicle = service.transferVehicle(1, 1, 2);
+        assertEquals(vehicle, updatedVehicle);
+        logger.trace("Test passed: transferVehicle");
+    }
+
+    @Test
+    void transferVehicle_ToNonExistentUser_ShouldThrowIllegalAccessException() throws IllegalAccessException{
+        when(vehicleRepositoryMock.findById(anyInt())).thenReturn(Optional.of(vehicle));
+        when(vehicle.getUser()).thenReturn(user);
+        when(vehicle.getUser().getUser_id()).thenReturn(1);
+        when(userServiceMock.getUserByUserId(anyInt())).thenReturn(null);
+
+        try{
+            Vehicle updatedVehicle = service.transferVehicle(1, 1, 2);
+            fail("Expected IllegalAccessException to be thrown.");
+        }
+        catch (IllegalAccessException e){
+            //Do nothing because this is desired result
+            logger.trace("Test passed: transferVehicle_ToNonExistentUser_ShouldThrowIllegalAccessException");
+        }
+    }
+
+    @Test
+    void transferVehicle_ThatUserDoesntOwn_ShouldThrowIllegalAccessException() throws IllegalAccessException{
+        when(vehicleRepositoryMock.findById(anyInt())).thenReturn(Optional.of(vehicle));
+        when(vehicle.getUser()).thenReturn(user);
+        when(vehicle.getUser().getUser_id()).thenReturn(3);
+
+        try{
+            Vehicle updatedVehicle = service.transferVehicle(1, 1, 2);
+            fail("Expected IllegalAccessException to be thrown.");
+        }
+        catch (IllegalAccessException e) {
+            //Do nothing because this is desired result
+            logger.trace("Test passed: transferVehicle_ThatUserDoesntOwn_ShouldThrowIllegalAccessException");
+        }
+    }
 }

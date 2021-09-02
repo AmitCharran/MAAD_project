@@ -7,9 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 /**
  * DTO for Vehicle model.
@@ -58,6 +55,7 @@ public class VehicleDTO {
         }
         return v;
     }
+
     public Vehicle convertToEntity(UserService userService, ModelService modelService, SaleService saleService) {
         return convertToEntity(userService, modelService, saleService, true);
     }
@@ -70,7 +68,7 @@ public class VehicleDTO {
      * @param saleService Required dependency injection
      * @return VehicleDTO
      */
-    public static VehicleDTO convertToDto(Vehicle vehicle, UserService userService, ModelService modelService, SaleService saleService) {
+    public static VehicleDTO convertToDto(Vehicle vehicle) {
         ModelMapper modelMapper = new ModelMapper();
         VehicleDTO vDTO = modelMapper.map(vehicle, VehicleDTO.class);
         vDTO.setUser_id(vehicle.getUser()==null?0:vehicle.getUser().getUser_id());

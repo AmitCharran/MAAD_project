@@ -27,19 +27,22 @@ public class VehicleController {
     private static final Logger logger = LoggerFactory.getLogger(VehicleController.class);
 
     private final VehicleService vehicleService;
-    @Autowired
-    private ModelService modelService;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private SaleService saleService;
+
+    private final UserService userService;
+    private final ModelService modelService;
+    private final SaleService saleService;
+
     /**
      * Injects service dependency
      */
     @Autowired
-    public VehicleController(VehicleService vehicleService){
+    public VehicleController(VehicleService vehicleService, UserService userService, ModelService modelService, SaleService saleService){
         this.vehicleService = vehicleService;
+        this.userService = userService;
+        this.modelService = modelService;
+        this.saleService = saleService;
     }
+
     /**
      * Maps "GET Vehicles/" to return a JSON string list of all Vehicles in database.
      * @return ResponseEntity<String>
@@ -150,5 +153,28 @@ public class VehicleController {
         vehicleService.deleteVehicle(Integer.parseInt(vehicle_id));
         logger.trace("Successfully deleted vehicle with id: " + vehicle_id);
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Maps "PUT vehicles/transfer/{vehicle_id}/to/{new_user_id}" to update of a Vehicle to a different User
+     * @param vehicle_id Vehicle being updated
+     * @param new_user_id the User that will be the new owner
+     * @param current_user_id currently logged in User
+     * @return Vehicle DTO with the new User ID
+     */
+    @PutMapping("/transfer/{vehicle_id}/to/{new_user_id}")
+    public @ResponseBody
+    ResponseEntity<VehicleDTO> transfer(@PathVariable String vehicle_id,
+                                        @PathVariable String new_user_id,
+                                        @RequestHeader(name = "user_id") String current_user_id){
+        try {
+            Vehicle vehicleWithNewOwner = vehicleService.transferVehicle(Integer.parseInt(vehicle_id), Integer.parseInt(current_user_id), Integer.parseInt(new_user_id));
+            VehicleDTO vehicleDTO = VehicleDTO.convertToDto(vehicleWithNewOwner);
+            return new ResponseEntity<>(vehicleDTO, HttpStatus.OK);
+        } catch (IllegalAccessException e) {
+            logger.warn(e.getMessage(), e);
+            logger.trace(e.getStackTrace().toString());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 }
