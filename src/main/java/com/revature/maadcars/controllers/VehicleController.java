@@ -27,9 +27,11 @@ public class VehicleController {
     private static final Logger logger = LoggerFactory.getLogger(VehicleController.class);
 
     private final VehicleService vehicleService;
+
     private final UserService userService;
     private final ModelService modelService;
     private final SaleService saleService;
+
     /**
      * Injects service dependency
      */
@@ -70,21 +72,30 @@ public class VehicleController {
     }
     /**
      * Maps POST Method to creation of a new persisted Vehicle based on request body.
-     * Includes check to throw exceptions if a vehicle with the same VIN is already in the database, or if VIN of vehicle provided is not exactly 17 chars long.
-     * @param v Vehicle object interpreted from request body.
+     * Includes input validation checks on VIN, model ID and whether user is logged in.
+     * @param vDto (VehicleDTO) DTO of Vehicle object passed in request body.
+     * @param current_user_id (String) Value of "user_id" request header.
      * @return ResponseEntity with status code 200 OK and Json of inserted Vehicle if successful, or a 4xx status code with error message in response body if input fails validation.
      */
     @PostMapping
     public @ResponseBody
-    ResponseEntity<String> createVehicle(@RequestBody Vehicle v) throws JsonProcessingException {
+    ResponseEntity<String> createVehicle(@RequestBody VehicleDTO vDto, @RequestHeader(value = "user_id",required = false) String current_user_id) throws JsonProcessingException {
         try {
-            if (vehicleService.getVehicleByVin(v.getVin()) != null) {
-                logger.info("Attempted to insert vehicle with overlapping VIN: " + v.getVin() + " and failed.");
+            if (modelService.getModelByModelId(vDto.getModel_id()) == null) {
+                logger.info("Attempted to insert with nonexistent model ID: " + vDto.getModel_id() + " and failed.");
+                return ResponseEntity.badRequest().body("Vehicle's model ID does not exist in database!");
+            }
+            if (vehicleService.getVehicleByVin(vDto.getVin()) != null) {
+                logger.info("Attempted to insert vehicle with overlapping VIN: " + vDto.getVin() + " and failed.");
                 return ResponseEntity.unprocessableEntity().body("Violation of UNIQUE constraint on 'vin' column in 'vehicles' table!");
             }
-            if (v.getVin().length() != 17) {
-                logger.info("Attempted to insert vehicle with invalid VIN: " + v.getVin() + " and failed.");
+            if (vDto.getVin().length() != 17) {
+                logger.info("Attempted to insert vehicle with invalid VIN: " + vDto.getVin() + " and failed.");
                 return ResponseEntity.badRequest().body("Vehicle Identification Number must be exactly 17 characters long!");
+            }
+            if (current_user_id == null || current_user_id.isEmpty() || userService.getUserByUserId(Integer.parseInt(current_user_id)) == null) {
+                logger.trace("Attempted to insert a vehicle while user is not logged in as an extant user.");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -92,11 +103,15 @@ public class VehicleController {
             logger.warn(Arrays.toString(e.getStackTrace()));
             return ResponseEntity.unprocessableEntity().body(e.getMessage());
         }
-        Vehicle objInserted = vehicleService.saveVehicle(v);
-        String strJson = new ObjectMapper().writeValueAsString(objInserted);
+        logger.trace("Got past input validation for createVehicle! Json dump of VehicleDTO's current state below:");
+        String strJson = new ObjectMapper().writeValueAsString(vDto);
+        logger.trace(strJson);
+        Vehicle objInput = vDto.convertToEntity(userService, modelService, saleService);
+        Vehicle objInserted = vehicleService.saveVehicle(objInput);
+        String strResponseJson = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(objInserted);
         logger.trace("Successfully inserted new Vehicle; assigned ID: " + objInserted.getVehicle_id());
         return ResponseEntity.ok()
-                .body(strJson);
+                .body(strResponseJson);
     }
     /**
      * Maps PUT Method to updating and persisting the Vehicle that matches the request body.
@@ -154,7 +169,7 @@ public class VehicleController {
                                         @RequestHeader(name = "user_id") String current_user_id){
         try {
             Vehicle vehicleWithNewOwner = vehicleService.transferVehicle(Integer.parseInt(vehicle_id), Integer.parseInt(current_user_id), Integer.parseInt(new_user_id));
-            VehicleDTO vehicleDTO = VehicleDTO.convertToDto(vehicleWithNewOwner, userService, modelService, saleService);
+            VehicleDTO vehicleDTO = VehicleDTO.convertToDto(vehicleWithNewOwner);
             return new ResponseEntity<>(vehicleDTO, HttpStatus.OK);
         } catch (IllegalAccessException e) {
             logger.warn(e.getMessage(), e);

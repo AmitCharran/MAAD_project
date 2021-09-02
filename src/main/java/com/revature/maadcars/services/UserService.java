@@ -56,7 +56,7 @@ public class UserService {
      * @return User row (only one)
      */
     public User getUserByUserId(Integer id){
-        return userRepository.findById(id).orElseThrow(RuntimeException::new);
+        return userRepository.findById(id).orElse(null);
     }
 
     /**
