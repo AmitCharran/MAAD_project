@@ -1,10 +1,10 @@
 package com.revature.maadcars.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.revature.maadcars.models.Make;
-import com.revature.maadcars.models.Model;
-import com.revature.maadcars.models.User;
-import com.revature.maadcars.models.Vehicle;
+import com.revature.maadcars.models.*;
+import com.revature.maadcars.services.ModelService;
+import com.revature.maadcars.services.SaleService;
+import com.revature.maadcars.services.UserService;
 import com.revature.maadcars.services.VehicleService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -255,4 +255,26 @@ class VehicleControllerTest {
         logger.trace("Test passed: delete_WrongUserId_ResponseStatus403");
     }
 
+    @Test
+    void transfer() throws Exception{
+        when(vehicleService.transferVehicle(1,2,1)).thenReturn(vehicle);
+
+        mockMvc.perform(put("/vehicles/transfer/1/to/1")
+                .header("user_id", "2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$.user_id").value("1"))
+                .andReturn();
+        logger.trace("Test passed: transfer");
+    }
+
+    @Test
+    void transfer_ThrowException() throws Exception{
+        when(vehicleService.transferVehicle(1,2,1)).thenThrow(new IllegalAccessException());
+
+        mockMvc.perform(put("/vehicles/transfer/1/to/1")
+                        .header("user_id", "2"))
+                .andExpect(status().isBadRequest());
+        logger.trace("Test passed: transfer_ThrowException");
+    }
 }

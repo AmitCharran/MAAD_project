@@ -151,15 +151,15 @@ public class VehicleController {
     public @ResponseBody
     ResponseEntity<VehicleDTO> transfer(@PathVariable String vehicle_id,
                                         @PathVariable String new_user_id,
-                                        @RequestHeader(name = "current_user_id") String current_user_id){
+                                        @RequestHeader(name = "user_id") String current_user_id){
         try {
             Vehicle vehicleWithNewOwner = vehicleService.transferVehicle(Integer.parseInt(vehicle_id), Integer.parseInt(current_user_id), Integer.parseInt(new_user_id));
             VehicleDTO vehicleDTO = VehicleDTO.convertToDto(vehicleWithNewOwner, userService, modelService, saleService);
-            return new ResponseEntity<VehicleDTO>(vehicleDTO, HttpStatus.OK);
+            return new ResponseEntity<>(vehicleDTO, HttpStatus.OK);
         } catch (IllegalAccessException e) {
             logger.warn(e.getMessage(), e);
             logger.trace(e.getStackTrace().toString());
-            return new ResponseEntity<VehicleDTO>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 }
