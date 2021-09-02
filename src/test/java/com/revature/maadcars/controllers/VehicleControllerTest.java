@@ -255,6 +255,11 @@ class VehicleControllerTest {
         logger.trace("Test passed: delete_WrongUserId_ResponseStatus403");
     }
 
+    /**
+     * Test for expected behavior of the transfer method. Mocks a header with the logged-in user ID
+     * and checks that the status is OK and the JSON has the new User ID.
+     * @throws Exception if vehicleService.transferVehicle or mockMvc.perform fail
+     */
     @Test
     void transfer() throws Exception{
         when(vehicleService.transferVehicle(1,2,1)).thenReturn(vehicle);
@@ -268,6 +273,12 @@ class VehicleControllerTest {
         logger.trace("Test passed: transfer");
     }
 
+    /**
+     * Test for expected behavior of the transfer method. Mocks throwing an IllegalAccessException
+     * when attempting the service method. Then mocks a header with the logged-in user ID
+     * and checks that the status is OK and the JSON has the new User ID.
+     * @throws Exception if mockMvc.perform fails
+     */
     @Test
     void transfer_ThrowException() throws Exception{
         when(vehicleService.transferVehicle(1,2,1)).thenThrow(new IllegalAccessException());
