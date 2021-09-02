@@ -40,7 +40,7 @@ public class VehicleService {
      * @return Vehicle row (only one)
      */
     public Vehicle getVehicleByVehicleId(Integer id){
-        return vehicleRepository.findById(id).orElseThrow(RuntimeException::new);
+        return vehicleRepository.findById(id).orElse(null);
     }
 
     /**
@@ -81,7 +81,7 @@ public class VehicleService {
                 vehicle.setUser(newUser);
                 Vehicle newVehicle = saveVehicle(vehicle);
                 logger.info("VehicleID: " + vehicleId + " has been transferred from " +
-                            vehicle.getUser().getUsername() + "(ID:" + currentUserId + ") " +
+                            vehicle.getUser().getUsername() + "(ID:" + currentUserId + ") to " +
                             newUser.getUsername() + "(ID:" + newOwnerId + ")");
                 return newVehicle;
             }

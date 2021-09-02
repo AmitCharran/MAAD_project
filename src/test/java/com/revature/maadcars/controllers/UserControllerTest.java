@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -73,6 +74,17 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.user_id").value(1))
                 .andExpect(jsonPath("$.username").value("test_user1"))
                 .andExpect(jsonPath("$.password").value("password"))
+                .andReturn();
+    }
+
+    @Test
+    void saveUserToDatabaseExceptBadInput() throws Exception {
+        when(userService.saveUser(any(User.class))).thenThrow(IllegalArgumentException.class);
+
+        mockMvc.perform(post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(user)))
+                .andExpect(status().isBadRequest())
                 .andReturn();
     }
 }

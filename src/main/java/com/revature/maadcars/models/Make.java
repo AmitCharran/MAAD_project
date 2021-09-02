@@ -1,6 +1,7 @@
 package com.revature.maadcars.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,6 +29,7 @@ public class Make {
     private int make_id;
 
     @OneToMany(mappedBy = "make")
+    @JsonIgnore
     private List<Model> models;
 
     @Column(name = "name", nullable = false)
