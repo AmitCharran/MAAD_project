@@ -1,6 +1,5 @@
 package com.revature.maadcars.models;
-import com.revature.maadcars.repository.BidRepository;
-import com.revature.maadcars.services.BidService;
+
 import com.revature.maadcars.services.VehicleService;
 import com.revature.maadcars.util.MaadCarsModelMapper;
 import lombok.Getter;
@@ -8,9 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
 
+import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * SaleDTO: This class will take JSON objects with int values for vehicle_id
@@ -20,13 +18,9 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class SaleDTO {
-
     private int sale_id;
     private int vehicle_id;
-    private int bid_id;
-    private Timestamp time_started;
-
-    
+    private Time time_started;
 
     /**
      * Returns the vehicle object by giving the vehicle_id
@@ -38,23 +32,13 @@ public class SaleDTO {
     }
 
     /**
-     * get bid by bidID
-     * @param bidService used to access bid objects
-     * @return bid Object
-     */
-    public Bid getBidObject(BidService bidService){
-        return bidService.getBidByBidId(bid_id);
-    }
-    
-
-    /**
      * Converts DTO using a ModelMapper to Sale entity.
      * Takes foreign key of vehicle_id and turns it into a vehicle object.
      * @param saleDTO saleDTO object obtained from RequestBody
      * @param vehicleService used to access the vehicle database for Vehicle Object
      * @return Sale object
      */
-    public static Sale convertToEntity(SaleDTO saleDTO, VehicleService vehicleService, BidService bidService) {
+    public static Sale convertToEntity(SaleDTO saleDTO, VehicleService vehicleService) {
         ModelMapper modelMapper = MaadCarsModelMapper.modelMapper();
         Sale sale = modelMapper.map(saleDTO, Sale.class);
 
@@ -64,20 +48,6 @@ public class SaleDTO {
         }else{
             //TODO: log vehicle does not exists
             throw new IllegalArgumentException("Vehicle does not exists. Must create vehicle first");
-        }
-
-
-
-        Bid bid = bidService.getBidByBidId(saleDTO.getBid_id());
-        if(bid == null){
-            // TODO: log bid does not exists
-            throw new IllegalArgumentException("bid does not exists");
-        }
-        if(sale.getBids() != null) {
-            sale.getBids().add(bidService.getBidByBidId(saleDTO.getBid_id()));
-        }else{
-            sale.setBids(new ArrayList<>());
-            sale.getBids().add(bidService.getBidByBidId(saleDTO.getBid_id()));
         }
         return sale;
     }

@@ -1,7 +1,6 @@
 package com.revature.maadcars.services;
 
 import com.revature.maadcars.models.Sale;
-import com.revature.maadcars.models.Vehicle;
 import com.revature.maadcars.repository.SaleRepository;
 import com.revature.maadcars.repository.VehicleRepository;
 import org.slf4j.Logger;
@@ -17,16 +16,16 @@ import java.util.List;
 @Service
 public class SaleService {
     private final SaleRepository saleRepository;
-    @Autowired
-    private VehicleRepository vehicleRepository;
+    private final VehicleRepository vehicleRepository;
     private static final Logger logger = LoggerFactory.getLogger(SaleService.class);
 
     /**
      * Injects repository dependency
      */
     @Autowired
-    public SaleService(SaleRepository saleRepository){
+    public SaleService(SaleRepository saleRepository, VehicleRepository vehicleRepository){
         this.saleRepository = saleRepository;
+        this.vehicleRepository = vehicleRepository;
     }
     /**
      * (Repository method call) Persists input Sale into 1 row

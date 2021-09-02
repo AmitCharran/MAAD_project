@@ -26,8 +26,6 @@ import java.util.List;
 public class SaleController {
     @Autowired
     private VehicleService vehicleService;
-    @Autowired
-    private BidService bidService;
     private final SaleService saleService;
     /**
      * Injects service dependency
@@ -70,8 +68,7 @@ public class SaleController {
                     throw new IllegalArgumentException("Vehicle already on sale");
                 }
             }
-
-            Sale sale = SaleDTO.convertToEntity(saleDTO, vehicleService, bidService);
+            Sale sale = SaleDTO.convertToEntity(saleDTO, vehicleService);
             return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(saleService.saveSale(sale)));
         }catch (IllegalArgumentException exception){
             return ResponseEntity.badRequest().body(exception.getMessage());

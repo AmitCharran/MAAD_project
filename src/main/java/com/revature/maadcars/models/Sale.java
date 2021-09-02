@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -33,5 +34,5 @@ public class Sale {
     private List<Bid> bids;
 
     @Column(name = "time_started")
-    private Timestamp time_started;
+    private Time time_started;
 }
