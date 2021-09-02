@@ -141,7 +141,7 @@ public class VehicleController {
     }
 
     /**
-     * Maps "PUT vehicles/transfer/{vehicle_id}/to/{new_user_id}"
+     * Maps "PUT vehicles/transfer/{vehicle_id}/to/{new_user_id}" to update of a Vehicle to a different User
      * @param vehicle_id Vehicle being updated
      * @param new_user_id the User that will be the new owner
      * @param current_user_id currently logged in User
