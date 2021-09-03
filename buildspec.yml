@@ -10,10 +10,9 @@ phases:
       - mvn clean
     post_build:
       commands:
-        - mvn package
-        - mv target/maadcars-0.0.1-SNAPSHOT.war maadcars.war 
+        - mvn package 
         - echo Build completed successfully
     artifacts:
       files:
-        'maadcars.war'
+        - target/maadcars-0.1.war
 
