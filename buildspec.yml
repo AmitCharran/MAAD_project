@@ -7,7 +7,7 @@ phases:
     commands:
       - echo Entered the build phase
       - echo Build started on `date`
-      - mvn install
+      - mvn clean install
     post_build:
       commands:
         - zip -r maadcars.zip target/maadcars-0.1.war
