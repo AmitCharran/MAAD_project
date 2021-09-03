@@ -10,9 +10,10 @@ phases:
       - mvn clean install
     post_build:
       commands:
-        - zip -r maadcars.zip target/maadcars-0.1.war
+        - zip -r maadcars.zip target/maadcars-0.1.war appspec.yml
         - aws s3 cp maadcars.zip s3://codepipeline-us-east-1-485792357857/maad2/
         - echo Build completed successfully
     artifacts:
       files:
-        - maadcars.zip
+        - taeget/maadcars-0.1.war
+        - appspec.yml
