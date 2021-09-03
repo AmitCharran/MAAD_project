@@ -29,6 +29,7 @@ public class SaleService {
     }
     /**
      * (Repository method call) Persists input Sale into 1 row
+     * Also checks if the Vehicle exists before saving into Sales DB
      * @param sale Sale object
      * @return Same Sale as input(?)
      */
@@ -45,7 +46,7 @@ public class SaleService {
      * @return Sale row (only one)
      */
     public Sale getSaleBySaleId(Integer id){
-        return saleRepository.findById(id).orElseThrow(RuntimeException::new);
+        return saleRepository.findById(id).orElse(null);
     }
     /**
      * (Repository method call) Gets List of all Sales

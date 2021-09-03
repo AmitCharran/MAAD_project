@@ -8,11 +8,10 @@ import lombok.Setter;
 import org.modelmapper.ModelMapper;
 
 import java.sql.Time;
-import java.sql.Timestamp;
 
 /**
  * SaleDTO: This class will take JSON objects with int values for vehicle_id
- * and is used to access the Vehicle Object for
+ * and is used to access the Vehicle Object for conversion
  */
 @Setter
 @Getter

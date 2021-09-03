@@ -1,6 +1,5 @@
 package com.revature.maadcars.controllers;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.revature.maadcars.models.*;
@@ -120,7 +119,6 @@ public class SaleControllerTest {
 
     /**
      * This test will return a status 400 because it is trying to create a Sale for a vehicle when it is already on sale
-     * @throws Exception
      */
     @Test
     void createSaleVehicleAlreadyOnSale() throws Exception{
