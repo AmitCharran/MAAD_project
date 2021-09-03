@@ -10,8 +10,10 @@ phases:
       - mvn clean
     post_build:
       commands:
-        - mvn install
+        - mvn install 
+        - zip -r maadcars.zip target/maadcars-0.1.war
+        - aws s3 cp maadcars.zip 
         - echo Build completed successfully
     artifacts:
       files:
-        'target/maadcars-0.1.war'
+        - maadcars.zip
