@@ -15,9 +15,7 @@ public class ModelController {
     private final ModelService modelService;
 
     /**
-     * One-Argument Constructor
-     * Sets the bidService to what is passed in the parameter
-     * @param modelService
+     * Constructor with dependency injection
      */
     @Autowired
     public ModelController(ModelService modelService){

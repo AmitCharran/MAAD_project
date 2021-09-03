@@ -23,7 +23,7 @@ public class UserController {
     private final UserService userService;
 
     /**
-     * Injects service dependency
+     * Constructor with dependency injection
      */
     @Autowired
     public UserController(UserService userService){
@@ -56,7 +56,7 @@ public class UserController {
      * @param username = {username} (String)
      * @return User
      */
-    @GetMapping("/username/{username}") // /users/username/bpinkerton
+    @GetMapping("/username/{username}")
     public @ResponseBody
     User findUserByUsername(@PathVariable String username){
         return userService.getUserByUsername(username);

@@ -4,18 +4,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.maadcars.models.Sale;
 import com.revature.maadcars.models.SaleDTO;
-import com.revature.maadcars.models.Vehicle;
-import com.revature.maadcars.services.BidService;
 import com.revature.maadcars.services.SaleService;
 import com.revature.maadcars.services.VehicleService;
-import com.revature.maadcars.util.MaadCarsModelMapper;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Time;
 import java.util.List;
 
 /**
@@ -24,14 +21,14 @@ import java.util.List;
 @Controller
 @RequestMapping("sales")
 public class SaleController {
-    @Autowired
-    private VehicleService vehicleService;
+    private final VehicleService vehicleService;
     private final SaleService saleService;
     /**
-     * Injects service dependency
+     * Constructor with dependency injection
      */
     @Autowired
-    public SaleController(SaleService saleService){
+    public SaleController(SaleService saleService, VehicleService vehicleService){
+        this.vehicleService = vehicleService;
         this.saleService = saleService;
     }
     /**
@@ -68,6 +65,7 @@ public class SaleController {
                     throw new IllegalArgumentException("Vehicle already on sale");
                 }
             }
+            saleDTO.setTime_started(new Time(System.currentTimeMillis()));
             Sale sale = SaleDTO.convertToEntity(saleDTO, vehicleService);
             return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(saleService.saveSale(sale)));
         }catch (IllegalArgumentException exception){

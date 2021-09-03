@@ -2,7 +2,6 @@ package com.revature.maadcars.models;
 
 import com.revature.maadcars.services.SaleService;
 import com.revature.maadcars.services.UserService;
-import com.revature.maadcars.services.VehicleService;
 import com.revature.maadcars.util.MaadCarsModelMapper;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,7 +48,7 @@ public class BidDTO {
      * @return Bid Object
      */
     public static Bid convertToEntity(BidDTO bidDTO, UserService userService, SaleService saleService){
-        ModelMapper modelMapper = MaadCarsModelMapper.modelMapper();
+        ModelMapper modelMapper = new ModelMapper();
         Bid bid = modelMapper.map(bidDTO, Bid.class);
 
         User user = bidDTO.getUserObject(userService);
