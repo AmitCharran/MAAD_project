@@ -34,5 +34,5 @@ public class Sale {
     private List<Bid> bids;
 
     @Column(name = "time_started")
-    private Timestamp time_started;
+    private Time time_started;
 }
