@@ -12,8 +12,6 @@ phases:
       commands:
         - mvn install
         - echo Build completed successfully
-        - Compress-Archive target/maadcars-0.1.war target/maadcars.zip
     artifacts:
       files:
-        - target/maadcars.zip
-
+        - target/maadcars-0.1.war
