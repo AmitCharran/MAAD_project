@@ -28,11 +28,13 @@ public class Model {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int model_id;
 
+
     @OneToMany(mappedBy = "model")
     @JsonIgnore
     private List<Vehicle> vehicles;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "make_id", referencedColumnName = "make_id", nullable = false)
     private Make make;
 

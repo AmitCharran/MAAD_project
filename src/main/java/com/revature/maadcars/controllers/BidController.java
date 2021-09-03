@@ -1,7 +1,12 @@
 package com.revature.maadcars.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.maadcars.models.Bid;
+import com.revature.maadcars.models.BidDTO;
 import com.revature.maadcars.services.BidService;
+import com.revature.maadcars.services.SaleService;
+import com.revature.maadcars.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,15 +19,18 @@ import java.util.List;
 @RequestMapping("bids")
 public class BidController {
     private final BidService bidService;
-
+    private final UserService userService;
+    private final SaleService saleService;
     /**
      * One-Argument Constructor
      * Sets the bidService to what is passed in the parameter
      * @param bidService
      */
     @Autowired
-    public BidController(BidService bidService){
+    public BidController(BidService bidService, UserService userService, SaleService saleService){
         this.bidService = bidService;
+        this.userService = userService;
+        this.saleService = saleService;
     }
 
     /**
@@ -48,13 +56,18 @@ public class BidController {
 
     /**
      * Takes a bid object and inserts it into our database
-     * @param bid Object of type Bid
+     * @param bidDTO Object of type Bid
      * @return The Bid object that is saved
      */
     @PostMapping
     public @ResponseBody
-    Bid createBid(@RequestBody Bid bid){
-        return bidService.saveBid(bid);
+    ResponseEntity<String> createBid(@RequestBody BidDTO bidDTO) throws JsonProcessingException{
+        try {
+            Bid bid = BidDTO.convertToEntity(bidDTO,userService,saleService);
+            return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(bidService.saveBid(bid)));
+        }catch (IllegalArgumentException exception){
+            return ResponseEntity.badRequest().body(exception.getMessage());
+        }
     }
 
     /**

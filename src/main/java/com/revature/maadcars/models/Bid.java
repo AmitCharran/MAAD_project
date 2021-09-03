@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.sql.Time;
 
 /**
  * Foreign keys:
@@ -30,7 +30,7 @@ public class Bid {
     private User user;
 
     @Column(name = "time_stamp")
-    private Timestamp timestamp;
+    private Time time;
 
     @Column(name = "bid_amount")
     private double bid;

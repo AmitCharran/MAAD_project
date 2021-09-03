@@ -18,7 +18,6 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -78,9 +77,9 @@ class UserControllerTest {
     }
 
     @Test
-    void saveUserToDatabaseExceptBadInput() throws Exception {
+    void saveUserToDatabaseHttpBadRequest() throws Exception {
         when(userService.saveUser(any(User.class))).thenThrow(IllegalArgumentException.class);
-
+        String s = new ObjectMapper().writeValueAsString(user);
         mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(user)))
