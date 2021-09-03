@@ -12,7 +12,7 @@ phases:
       commands:
         - mvn install 
         - zip -r maadcars.zip target/maadcars-0.1.war
-        - aws s3 cp maadcars.zip 
+        - aws s3 cp maadcars.zip s3://codepipeline-us-east-1-485792357857/maad2/
         - echo Build completed successfully
     artifacts:
       files:
