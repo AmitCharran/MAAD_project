@@ -1,6 +1,5 @@
 package com.revature.maadcars.services;
 
-import com.revature.maadcars.controllers.VehicleController;
 import com.revature.maadcars.models.User;
 import com.revature.maadcars.repository.UserRepository;
 import org.slf4j.Logger;

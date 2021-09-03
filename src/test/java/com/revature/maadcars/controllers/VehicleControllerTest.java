@@ -1,10 +1,10 @@
 package com.revature.maadcars.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.revature.maadcars.models.Make;
-import com.revature.maadcars.models.Model;
-import com.revature.maadcars.models.User;
-import com.revature.maadcars.models.Vehicle;
+import com.revature.maadcars.models.*;
+import com.revature.maadcars.services.ModelService;
+import com.revature.maadcars.services.SaleService;
+import com.revature.maadcars.services.UserService;
 import com.revature.maadcars.services.VehicleService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -38,6 +38,12 @@ class VehicleControllerTest {
 
     @MockBean
     private VehicleService vehicleService;
+    @MockBean
+    private ModelService modelService;
+    @MockBean
+    private UserService userService;
+    @MockBean
+    private SaleService saleService;
 
     @MockBean
     private Model modelMock;
@@ -47,8 +53,8 @@ class VehicleControllerTest {
     private User userMock;
 
     private MockMvc mockMvc;
-    @MockBean
     private Vehicle vehicle;
+    private VehicleDTO vDto;
     private List<Vehicle> vehicles;
 
     @BeforeAll
@@ -71,15 +77,25 @@ class VehicleControllerTest {
         vehicle.setUser(userMock);
         vehicle.set_stolen(false);
         vehicle.setColor("white");
+        vehicle.setDescription("none");
       
         vehicles = new ArrayList<>();
         vehicles.add(vehicle);
+
+        vDto = new VehicleDTO();
+        vDto.setVehicle_id(1);
+        vDto.setVin("1234567890ABCDEFG");
+        vDto.setModel_id(1);
+        vDto.setUser_id(1);
+        vDto.set_stolen(false);
+        vDto.setColor("white");
+        vDto.setDescription("none");
 
         userMock.setUser_id(1);
     }
 
     @Test
-    void getAllVehicles() throws Exception {
+    void shouldReturnAllVehiclesWhenGetAllVehicles() throws Exception {
         when(vehicleService.getAllVehicles()).thenReturn(vehicles);
 
         mockMvc.perform(get("/vehicles"))
@@ -93,7 +109,18 @@ class VehicleControllerTest {
     }
 
     @Test
-    void findVehicleById() throws Exception {
+    void shouldReturnNoResultMessageWhenGetAllVehiclesIsEmpty() throws Exception {
+        when(vehicleService.getAllVehicles()).thenReturn(new ArrayList<>());
+
+        mockMvc.perform(get("/vehicles"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$").value("No results found matching your search."))
+                .andReturn();
+    }
+
+    @Test
+    void shouldReturnVehicleWhenFindVehicleById() throws Exception {
         when(vehicleService.getVehicleByVehicleId(anyInt())).thenReturn(vehicle);
 
         mockMvc.perform(get("/vehicles/1"))
@@ -106,6 +133,17 @@ class VehicleControllerTest {
                 .andReturn();
     }
 
+    @Test
+    void shouldReturnNoResultsMessageWhenFindVehicleByIdIsEmpty() throws Exception {
+        when(vehicleService.getVehicleByVehicleId(anyInt())).thenReturn(null);
+
+        mockMvc.perform(get("/vehicles/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$").value("No results found matching your search."))
+                .andReturn();
+    }
+
     /**
      * Perform a POST request on "/vehicles", passing a Json containing a valid vehicle to be persisted. Confirm that the values in the response body match the input vehicle.
      * Service layer is mocked to think no vehicle with overlapping VIN is already in database.
@@ -113,19 +151,22 @@ class VehicleControllerTest {
      */
     @Test
     void post_ReturnCreatedVehicle() throws Exception {
-        when(vehicleService.getVehicleByVin(vehicle.getVin())).thenReturn(null);
+        when(modelService.getModelByModelId(vDto.getModel_id())).thenReturn(modelMock);
+        when(vehicleService.getVehicleByVin(vDto.getVin())).thenReturn(null);
+        when(userService.getUserByUserId(1)).thenReturn(userMock);
         when(vehicleService.saveVehicle(any(Vehicle.class))).thenReturn(vehicle);
 
         mockMvc.perform(post("/vehicles")
+                .header("user_id","1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(vehicle)))
-
+                .content(new ObjectMapper().writeValueAsString(vDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists())
                 .andExpect(jsonPath("$.vehicle_id").value("1"))
                 .andExpect(jsonPath("$.vin").value("1234567890ABCDEFG"))
                 .andExpect(jsonPath("$.color").value("white"))
                 .andExpect(jsonPath("$._stolen").value("false"))
+                .andExpect(jsonPath("$.description").value("none"))
                 .andReturn();
         logger.trace("Test passed: post_ReturnCreatedVehicle");
     }
@@ -137,11 +178,15 @@ class VehicleControllerTest {
      */
     @Test
     void post_VinAlreadyInDatabase_ResponseStatus422() throws Exception {
-        when(vehicleService.getVehicleByVin(vehicle.getVin())).thenReturn(vehicle);
+        when(modelService.getModelByModelId(vDto.getModel_id())).thenReturn(modelMock);
+        when(vehicleService.getVehicleByVin(vDto.getVin())).thenReturn(vehicle);
+        when(userService.getUserByUserId(1)).thenReturn(userMock);
+        when(vehicleService.saveVehicle(any(Vehicle.class))).thenReturn(vehicle);
 
         mockMvc.perform(post("/vehicles")
+                .header("user_id","1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(vehicle)))
+                .content(new ObjectMapper().writeValueAsString(vDto)))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$").value("Violation of UNIQUE constraint on 'vin' column in 'vehicles' table!"))
                 .andReturn();
@@ -155,17 +200,51 @@ class VehicleControllerTest {
      */
     @Test
     void post_VinNot17Chars_ResponseStatus400() throws Exception {
-        vehicle.setVin("0000");
-
-        when(vehicleService.getVehicleByVin(vehicle.getVin())).thenReturn(null);
+        when(modelService.getModelByModelId(vDto.getModel_id())).thenReturn(modelMock);
+        when(vehicleService.getVehicleByVin(vDto.getVin())).thenReturn(null);
+        vDto.setVin("0000");
 
         mockMvc.perform(post("/vehicles")
+                .header("user_id","1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(vehicle)))
+                .content(new ObjectMapper().writeValueAsString(vDto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$").value("Vehicle Identification Number must be exactly 17 characters long!"))
                 .andReturn();
         logger.trace("Test passed: post_VinNot17Chars_ResponseStatus400");
+    }
+
+    @Test
+    void post_NotLoggedIn_ResponseStatus403() throws Exception {
+        when(modelService.getModelByModelId(vDto.getModel_id())).thenReturn(modelMock);
+        when(vehicleService.getVehicleByVin(vDto.getVin())).thenReturn(null);
+        when(userService.getUserByUserId(1)).thenReturn(userMock);
+        when(vehicleService.saveVehicle(any(Vehicle.class))).thenReturn(vehicle);
+
+        mockMvc.perform(post("/vehicles")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(vDto)))
+                .andExpect(status().isForbidden())
+                .andReturn();
+        logger.trace("Test passed: post_NotLoggedIn_ResponseStatus403");
+    }
+
+    @Test
+    void post_InvalidModelId_ResponseStatus400() throws Exception {
+        when(modelService.getModelByModelId(vDto.getModel_id())).thenReturn(null);
+        when(vehicleService.getVehicleByVin(vDto.getVin())).thenReturn(null);
+        when(userService.getUserByUserId(1)).thenReturn(userMock);
+        when(vehicleService.saveVehicle(any(Vehicle.class))).thenReturn(vehicle);
+
+        mockMvc.perform(post("/vehicles")
+                .header("user_id","1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(vDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$").value("Vehicle's model ID does not exist in database!"))
+                .andReturn();
+        logger.trace("Test passed: post_ReturnCreatedVehicle");
     }
 
     @Test
@@ -233,4 +312,37 @@ class VehicleControllerTest {
         logger.trace("Test passed: delete_WrongUserId_ResponseStatus403");
     }
 
+    /**
+     * Test for expected behavior of the transfer method. Mocks a header with the logged-in user ID
+     * and checks that the status is OK and the JSON has the new User ID.
+     * @throws Exception if vehicleService.transferVehicle or mockMvc.perform fail
+     */
+    @Test
+    void transfer() throws Exception{
+        when(vehicleService.transferVehicle(1,2,1)).thenReturn(vehicle);
+
+        mockMvc.perform(put("/vehicles/transfer/1/to/1")
+                .header("user_id", "2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$.user_id").value("1"))
+                .andReturn();
+        logger.trace("Test passed: transfer");
+    }
+
+    /**
+     * Test for expected behavior of the transfer method. Mocks throwing an IllegalAccessException
+     * when attempting the service method. Then mocks a header with the logged-in user ID
+     * and checks that the status is OK and the JSON has the new User ID.
+     * @throws Exception if mockMvc.perform fails
+     */
+    @Test
+    void transfer_ThrowException() throws Exception{
+        when(vehicleService.transferVehicle(1,2,1)).thenThrow(new IllegalAccessException());
+
+        mockMvc.perform(put("/vehicles/transfer/1/to/1")
+                        .header("user_id", "2"))
+                .andExpect(status().isBadRequest());
+        logger.trace("Test passed: transfer_ThrowException");
+    }
 }
