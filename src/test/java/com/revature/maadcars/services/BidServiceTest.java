@@ -9,9 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import static org.junit.jupiter.api.Assertions.*;
 import java.sql.Time;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class BidServiceTest {
     private BidRepository bidRepository;
@@ -41,5 +42,18 @@ public class BidServiceTest {
         assertEquals(bid, bidService.saveBid(bid));
     }
 
+    @Test
+    void getBidByBidId() {
+        when(bidRepository.findById(1)).thenReturn(Optional.of(bid));
+        assertEquals(bid, bidService.getBidByBidId(1));
+    }
+
+    @Test
+    void deleteBid() {
+        when(bidRepository.findById(1)).thenReturn(Optional.of(bid));
+        doNothing().when(bidRepository).delete(any());
+        bidService.deleteBid(1);
+        verify(bidRepository).delete(bid);
+    }
 
 }
