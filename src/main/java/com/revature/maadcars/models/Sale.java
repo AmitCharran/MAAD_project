@@ -1,5 +1,6 @@
 package com.revature.maadcars.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,11 +24,12 @@ public class Sale {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int sale_id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "vehicle_id", referencedColumnName = "vehicle_id")
     private Vehicle vehicle;
 
     @OneToMany(mappedBy = "sale")
+    @JsonIgnore
     private List<Bid> bids;
 
     @Column(name = "time_started")

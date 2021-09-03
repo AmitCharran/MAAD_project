@@ -30,7 +30,7 @@ public class BidService {
      * @return return Bid object otherwise RuntimeException
      */
     public Bid getBidByBidId(Integer id){
-        return bidRepository.findById(id).orElseThrow(RuntimeException::new);
+        return bidRepository.findById(id).orElse(null);
     }
 
     /**

@@ -1,7 +1,10 @@
 package com.revature.maadcars.services;
 
+import com.revature.maadcars.models.User;
 import com.revature.maadcars.models.Vehicle;
 import com.revature.maadcars.repository.VehicleRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,13 +14,17 @@ import java.util.List;
  */
 @Service
 public class VehicleService {
+    private static final Logger logger = LoggerFactory.getLogger(VehicleService.class);
+
     private final VehicleRepository vehicleRepository;
+    private final UserService userService;
     /**
      * Injects repository dependency
      */
     @Autowired
-    public VehicleService(VehicleRepository vehicleRepository){
+    public VehicleService(VehicleRepository vehicleRepository, UserService userService){
         this.vehicleRepository = vehicleRepository;
+        this.userService = userService;
     }
     /**
      * (Repository method call) Persists input Vehicle into 1 row
@@ -33,7 +40,7 @@ public class VehicleService {
      * @return Vehicle row (only one)
      */
     public Vehicle getVehicleByVehicleId(Integer id){
-        return vehicleRepository.findById(id).orElseThrow(RuntimeException::new);
+        return vehicleRepository.findById(id).orElse(null);
     }
 
     /**
@@ -57,5 +64,35 @@ public class VehicleService {
      */
     public void deleteVehicle(Integer vehicleId){
         vehicleRepository.findById(vehicleId).ifPresent(vehicleRepository::delete);
+    }
+
+    /**
+     * Transfer ownership of a vehicle from one owner to another.
+     * @param vehicleId - the ID of the Vehicle to be transferred
+     * @param currentUserId - the ID of the current logged-in User
+     * @param newOwnerId - the ID of the User who will own the Vehicle after the transfer
+     * @throws IllegalAccessException - if the current User does not own the Vehicle
+     */
+    public Vehicle transferVehicle(Integer vehicleId, Integer currentUserId, Integer newOwnerId) throws IllegalAccessException{
+        Vehicle vehicle = getVehicleByVehicleId(vehicleId);
+        if(vehicle.getUser().getUser_id() == currentUserId){
+            try{
+                User newUser = userService.getUserByUserId(newOwnerId);
+                vehicle.setUser(newUser);
+                Vehicle newVehicle = saveVehicle(vehicle);
+                logger.info("VehicleID: " + vehicleId + " has been transferred from " +
+                            vehicle.getUser().getUsername() + "(ID:" + currentUserId + ") to " +
+                            newUser.getUsername() + "(ID:" + newOwnerId + ")");
+                return newVehicle;
+            }
+            catch (RuntimeException e){
+                logger.warn("Attempted vehicle transfer to nonexistent user ID " + newOwnerId, e);
+                throw new IllegalAccessException("That user does not exist.");
+            }
+        }
+        else{
+            logger.warn("Illegal vehicle ownership transfer attempt made by UserID:" + currentUserId + " on VehicleID:" + vehicleId);
+            throw new IllegalAccessException("You cannot transfer vehicles you do not own.");
+        }
     }
 }

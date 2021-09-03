@@ -1,13 +1,18 @@
 package com.revature.maadcars.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.maadcars.models.Sale;
+import com.revature.maadcars.models.SaleDTO;
 import com.revature.maadcars.services.SaleService;
+import com.revature.maadcars.services.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Time;
 import java.util.List;
 
 /**
@@ -16,12 +21,14 @@ import java.util.List;
 @Controller
 @RequestMapping("sales")
 public class SaleController {
+    private final VehicleService vehicleService;
     private final SaleService saleService;
     /**
-     * Injects service dependency
+     * Constructor with dependency injection
      */
     @Autowired
-    public SaleController(SaleService saleService){
+    public SaleController(SaleService saleService, VehicleService vehicleService){
+        this.vehicleService = vehicleService;
         this.saleService = saleService;
     }
     /**
@@ -45,14 +52,27 @@ public class SaleController {
     }
     /**
      * Maps POST Method to creation of a new persisted Sale based on request body.
-     * @param s Sale object interpreted from request body.
-     * @return Persisted Sale.
+     * @param saleDTO Sale object interpreted from request body.
+     * @return Status OK if Vehicle exists, other Status Bad Request
      */
     @PostMapping
     public @ResponseBody
-    Sale createSale(@RequestBody Sale s){
-        return saleService.saveSale(s);
+    ResponseEntity<String> createSale(@RequestBody SaleDTO saleDTO) throws JsonProcessingException {
+        try {
+            List<Sale> sales = getAllSales();
+            for(Sale s: sales){
+                if( s.getVehicle() != null && s.getVehicle().getVehicle_id() == saleDTO.getVehicle_id()){
+                    throw new IllegalArgumentException("Vehicle already on sale");
+                }
+            }
+            saleDTO.setTime_started(new Time(System.currentTimeMillis()));
+            Sale sale = SaleDTO.convertToEntity(saleDTO, vehicleService);
+            return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(saleService.saveSale(sale)));
+        }catch (IllegalArgumentException exception){
+            return ResponseEntity.badRequest().body(exception.getMessage());
+        }
     }
+
     /**
      * Maps PUT Method to updating and persisting the Sale that matches the request body.
      * @param s Sale object interpreted from request body.
@@ -74,4 +94,5 @@ public class SaleController {
         saleService.deleteSale(Integer.parseInt(id));
         return ResponseEntity.ok(HttpStatus.OK);
     }
+
 }

@@ -16,9 +16,7 @@ public class MakeController {
     private final MakeService makeService;
 
     /**
-     * One-Argument Constructor
-     * Sets the makeService to what is passed in the parameter
-     * @param makeService
+     * Constructor with dependency injection
      */
     @Autowired
     public MakeController(MakeService makeService){

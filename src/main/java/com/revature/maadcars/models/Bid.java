@@ -24,4 +24,14 @@ public class Bid {
     @ManyToOne
     @JoinColumn(name = "sale_id", referencedColumnName = "sale_id", nullable = false)
     private Sale sale;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
+    private User user;
+
+    @Column(name = "time_stamp")
+    private Time time;
+
+    @Column(name = "bid_amount")
+    private double bid;
 }
