@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.Time;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -31,9 +32,7 @@ public class BidController {
     private final SaleService saleService;
     private final VehicleService vehicleService;
     /**
-     * One-Argument Constructor
-     * Sets the bidService to what is passed in the parameter
-     * @param bidService
+     * Constructor with dependency injection
      */
     @Autowired
     public BidController(BidService bidService, UserService userService, SaleService saleService, VehicleService vehicleService){
@@ -73,6 +72,7 @@ public class BidController {
     public @ResponseBody
     ResponseEntity<String> createBid(@RequestBody BidDTO bidDTO) throws JsonProcessingException{
         try {
+            bidDTO.setTime(new Time(System.currentTimeMillis()));
             Bid bid = BidDTO.convertToEntity(bidDTO,userService,saleService);
             return ResponseEntity.ok().body(new ObjectMapper().writeValueAsString(bidService.saveBid(bid)));
         }catch (IllegalArgumentException exception){
@@ -98,6 +98,7 @@ public class BidController {
      * @param user_id (int) ID of currently logged in user (read from request header)
      * @return OK if transaction successfully commits.
      */
+    @Transactional(rollbackFor = Throwable.class)
     @DeleteMapping("/{id}")
     public @ResponseBody
     ResponseEntity<String> finalizeBid(@PathVariable String id, @RequestHeader(value = "user_id", required = false) String user_id) {
@@ -123,7 +124,7 @@ public class BidController {
      @throws SQLIntegrityConstraintViolationException Thrown when either bid or sale is orphaned (bid points to null sale and/or user, or sale points to null vehicle)
      @throws IllegalAccessException Thrown when client is not logged in as owner of vehicle being sold.
      */
-    @Transactional(rollbackFor = {Throwable.class})
+    @Transactional(rollbackFor = Throwable.class)
     public @ResponseBody
     ResponseEntity<String> doFinalizeBid(@PathVariable String id, @RequestHeader(value = "user_id", required = false) String user_id) throws SQLIntegrityConstraintViolationException, IllegalAccessException {
         Bid bid;
@@ -152,7 +153,9 @@ public class BidController {
             // Should be 403
         }
         logger.info("Attempt to finalize bid with ID " + id + " passed input validation, now being processed...");
-        bidService.deleteBid(bid.getBid_id());
+        for (Bid b : sale.getBids()) {
+            bidService.deleteBid(b.getBid_id());
+        }
         saleService.deleteSale(sale.getSale_id());
         vehicleService.transferVehicle(vehicle.getVehicle_id(), current_user_id, buyer.getUser_id());
         return ResponseEntity.ok().build();

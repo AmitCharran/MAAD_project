@@ -33,7 +33,7 @@ public class VehicleController {
     private final SaleService saleService;
 
     /**
-     * Injects service dependency
+     * Constructor with dependency injection
      */
     @Autowired
     public VehicleController(VehicleService vehicleService, UserService userService, ModelService modelService, SaleService saleService){
@@ -173,7 +173,7 @@ public class VehicleController {
             return new ResponseEntity<>(vehicleDTO, HttpStatus.OK);
         } catch (IllegalAccessException e) {
             logger.warn(e.getMessage(), e);
-            logger.trace(e.getStackTrace().toString());
+            logger.trace(Arrays.toString(e.getStackTrace()));
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }

@@ -3,6 +3,7 @@ package com.revature.maadcars.models;
 import com.revature.maadcars.services.ModelService;
 import com.revature.maadcars.services.SaleService;
 import com.revature.maadcars.services.UserService;
+import com.revature.maadcars.util.MaadCarsModelMapper;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -62,14 +63,11 @@ public class VehicleDTO {
 
     /**
      * Static method to convert a Vehicle object to a DTO based on its fields.
-     * @param vehicle
-     * @param userService Required dependency injection
-     * @param modelService Required dependency injection
-     * @param saleService Required dependency injection
+     * @param vehicle Vehicle to be converted
      * @return VehicleDTO
      */
     public static VehicleDTO convertToDto(Vehicle vehicle) {
-        ModelMapper modelMapper = new ModelMapper();
+        ModelMapper modelMapper = MaadCarsModelMapper.modelMapper();
         VehicleDTO vDTO = modelMapper.map(vehicle, VehicleDTO.class);
         vDTO.setUser_id(vehicle.getUser()==null?0:vehicle.getUser().getUser_id());
         vDTO.setModel_id(vehicle.getModel()==null?0:vehicle.getModel().getModel_id());
