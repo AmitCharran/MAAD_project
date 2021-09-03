@@ -1,13 +1,13 @@
 package com.revature.maadcars.controllers;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.revature.maadcars.models.*;
 import com.revature.maadcars.services.BidService;
 import com.revature.maadcars.services.SaleService;
 import com.revature.maadcars.services.UserService;
+import com.revature.maadcars.services.VehicleService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +18,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -40,13 +39,16 @@ public class BidControllerTest {
     private UserService userService;
     @MockBean
     private SaleService saleService;
+    @MockBean
+    private VehicleService vehicleService;
 
     private Bid bid;
     private BidDTO bidDTO;
     private User user;
     private Sale sale;
+    private Vehicle vehicle;
 
-
+    private User buyer;
 
     @BeforeEach
     void setup(){
@@ -60,9 +62,15 @@ public class BidControllerTest {
         user.setEmail("a@a.com");
         user.setPassword("111111");
 
+        vehicle = new Vehicle();
+        vehicle.setVehicle_id(1);
+        vehicle.setUser(user);
+
         sale = new Sale();
+        sale.setSale_id(1);
         sale.setBids(new ArrayList<>());
-        sale.setVehicle(new Vehicle());
+        sale.setVehicle(vehicle);
+        vehicle.setSale(sale);
 
         bid = new Bid();
         bid.setBid_id(1);
@@ -70,12 +78,17 @@ public class BidControllerTest {
         bid.setTime(new Time(System.currentTimeMillis()));
         bid.setUser(user);
         bid.setBid(100.09);
+        sale.getBids().add(bid);
 
         bidDTO = new BidDTO();
         bidDTO.setSale_id(1);
         bidDTO.setTime(new Time(System.currentTimeMillis()));
         bidDTO.setUser_id(1);
         bidDTO.setBid(100.09);
+
+        buyer = new User();
+        buyer.setUser_id(2);
+        buyer.setVehicles(new ArrayList<>());
     }
 
     /**
@@ -130,15 +143,83 @@ public class BidControllerTest {
         when(saleService.getSaleBySaleId(anyInt())).thenReturn(sale);
         when(bidService.saveBid(any(Bid.class))).thenReturn(bid);
 
-
         mockMvc.perform(post("/bids")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(bidDTO)))
                 .andExpect(status().isBadRequest())
                 .andReturn();
-
     }
 
+    @Test
+    void finalizeBid_ValidRequest() throws Exception {
+        bid.setUser(buyer);
+        when(bidService.getBidByBidId(1)).thenReturn(bid);
+        doNothing().when(bidService).deleteBid(1);
+        doNothing().when(saleService).deleteSale(1);
+        when(vehicleService.transferVehicle(1,1,2)).thenReturn(vehicle);
 
+        mockMvc.perform(delete("/bids/1")
+                .header("user_id",1))
+                .andExpect(status().isOk());
 
+        verify(bidService).deleteBid(1);
+        verify(saleService).deleteSale(1);
+        verify(vehicleService).transferVehicle(1,1,2);
+    }
+
+    @Test
+    void finalizeBid_BidIdNotExists_StatusCode404() throws Exception {
+        bid.setUser(buyer);
+        when(bidService.getBidByBidId(1)).thenReturn(null);
+        doNothing().when(bidService).deleteBid(1);
+        doNothing().when(saleService).deleteSale(1);
+        when(vehicleService.transferVehicle(1,1,2)).thenReturn(vehicle);
+
+        mockMvc.perform(delete("/bids/1")
+                .header("user_id",1))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$").value("Bid ID does not exist in database!"));
+
+        verify(bidService).getBidByBidId(1);
+        verifyNoMoreInteractions(bidService);
+        verifyNoInteractions(saleService);
+        verifyNoInteractions(vehicleService);
+    }
+
+    @Test
+    void finalizeBid_OrphanedBid_StatusCode500() throws Exception {
+        bid.setUser(buyer);
+        bid.setSale(null);
+        when(bidService.getBidByBidId(1)).thenReturn(bid);
+        doNothing().when(bidService).deleteBid(1);
+        doNothing().when(saleService).deleteSale(1);
+        when(vehicleService.transferVehicle(1,1,2)).thenReturn(vehicle);
+
+        mockMvc.perform(delete("/bids/1")
+                .header("user_id",1))
+                .andExpect(status().isInternalServerError());
+
+        verify(bidService).getBidByBidId(1);
+        verifyNoMoreInteractions(bidService);
+        verifyNoInteractions(saleService);
+        verifyNoInteractions(vehicleService);
+    }
+
+    @Test
+    void finalizeBid_NotLoggedInAsOwner_StatusCode403() throws Exception {
+        bid.setUser(buyer);
+        when(bidService.getBidByBidId(1)).thenReturn(bid);
+        doNothing().when(bidService).deleteBid(1);
+        doNothing().when(saleService).deleteSale(1);
+        when(vehicleService.transferVehicle(1,1,2)).thenReturn(vehicle);
+
+        mockMvc.perform(delete("/bids/1")
+                .header("user_id",2))
+                .andExpect(status().isForbidden());
+
+        verify(bidService).getBidByBidId(1);
+        verifyNoMoreInteractions(bidService);
+        verifyNoInteractions(saleService);
+        verifyNoInteractions(vehicleService);
+    }
 }
