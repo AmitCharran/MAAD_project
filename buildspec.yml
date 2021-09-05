@@ -16,4 +16,3 @@ phases:
     artifacts:
       files:
         - taeget/maadcars-0.1.war
-        - appspec.yml
