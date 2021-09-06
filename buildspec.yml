@@ -1,17 +1,11 @@
-version: 0.2
 phases:
   install:
     runtime-versions:
       java: corretto8
-  build:
+  post_build:
     commands:
-      - echo Entered the build phase
-      - echo Build started on `date`
-      - mvn clean
-    post_build:
-      commands:
-        - mvn package
-        - echo Build completed successfully
-    artifacts:
-      files:
-        - targe/maadcars-0.1.war
+      - mvn package
+      - mv target/maadcars-0.1.war ROOT.war
+  artifacts:
+    files:    
+      - ROOT.war
