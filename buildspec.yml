@@ -2,7 +2,10 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      java: corretto8
+      java: corretto8    
+  build:
+    commands:
+      - mvn test
   post_build:
     commands:
       - mvn package
