@@ -5,14 +5,13 @@ phases:
       java: corretto8
   build:
     commands:
-      - echo Entered the build phase
-      - echo Build started on `date`
       - mvn clean
-    post_build:
-      commands:
-        - mvn install
-        - echo Build completed successfully
-    artifacts:
-      files:
-        - target/maadcars-0.1.war
+  post_build:
+    commands:
+      - mvn package
+      - mv target/maadcars-0.1.war ROOT.war
+artifacts:
+  files:
+    - ROOT.war
+
 
