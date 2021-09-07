@@ -6,7 +6,7 @@ phases:
   build:
     commands:
       - mvn clean
-  post-build:
+  post_build:
     commands:
       - mvn package
       - mv target/maadcars-0.1.war ROOT.war
