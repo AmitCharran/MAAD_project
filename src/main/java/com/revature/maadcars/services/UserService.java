@@ -51,6 +51,15 @@ public class UserService {
     }
 
     /**
+     * Takes the input User object and updates that User in the database
+     * @param user User object with new values
+     * @return User with the new values (should be same as @param)
+     */
+    public User updateUser(User user){
+        return userRepository.save(user);
+    }
+
+    /**
      * (Repository method call) Gets 1 User by user ID
      * @param id int
      * @return User row (only one)
