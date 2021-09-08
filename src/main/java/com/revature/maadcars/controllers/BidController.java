@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @Controller
+@CrossOrigin
 @RequestMapping("bids")
 public class BidController {
     private static final Logger logger = LoggerFactory.getLogger(BidController.class);

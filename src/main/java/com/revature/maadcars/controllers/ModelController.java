@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 @Controller
+@CrossOrigin
 @RequestMapping("models")
 public class ModelController {
     private final ModelService modelService;
