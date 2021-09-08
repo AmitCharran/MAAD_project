@@ -18,6 +18,7 @@ import java.util.List;
  * Controller implementation for the User Entity.
  */
 @Controller
+@CrossOrigin
 @RequestMapping("users")
 public class UserController {
     private final UserService userService;

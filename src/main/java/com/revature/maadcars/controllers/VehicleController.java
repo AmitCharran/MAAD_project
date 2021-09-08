@@ -22,6 +22,7 @@ import java.util.List;
  * Controller implementation for the Vehicle Entity.
  */
 @Controller
+@CrossOrigin
 @RequestMapping("/vehicles")
 public class VehicleController {
     private static final Logger logger = LoggerFactory.getLogger(VehicleController.class);
