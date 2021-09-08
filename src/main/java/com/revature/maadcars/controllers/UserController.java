@@ -87,7 +87,7 @@ public class UserController {
     @PutMapping
     public @ResponseBody
     User updateUser(@RequestBody User u){
-        return userService.saveUser(u);
+        return userService.updateUser(u);
     }
 
     /**
