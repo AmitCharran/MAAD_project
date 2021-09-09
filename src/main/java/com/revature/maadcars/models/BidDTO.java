@@ -19,8 +19,8 @@ import java.sql.Time;
 @NoArgsConstructor
 public class BidDTO {
     private int bid_id;
-    private int sale_id;
-    private int user_id;
+    private int sale;
+    private int user;
     private Time time;
     private double bid;
     /**
