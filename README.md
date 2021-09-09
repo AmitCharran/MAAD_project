@@ -54,7 +54,7 @@ As a user, I can:
 - [ ] All exceptions are properly caught and handled
 - [ ] Proper use of OOP principles
 - [ ] Documentation (all classes and methods have basic documentation)
-- [ ] SQL Data Persistance (at least 3 tables; all 3NF (normal form))
+- [ ] SQL Data Persistence (at least 3 tables; all 3NF (normal form))
 - [ ] Unit tests for service-layer classes
 - [ ] Logging messages and exceptions to a file
 - [ ] UI built with Angular
