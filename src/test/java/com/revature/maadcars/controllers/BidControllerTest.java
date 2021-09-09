@@ -72,9 +72,9 @@ public class BidControllerTest {
         bid.setBid(100.09);
 
         bidDTO = new BidDTO();
-        bidDTO.setSale_id(1);
+        bidDTO.setSale(1);
         bidDTO.setTime(new Time(System.currentTimeMillis()));
-        bidDTO.setUser_id(1);
+        bidDTO.setUser(1);
         bidDTO.setBid(100.09);
     }
 
@@ -138,7 +138,5 @@ public class BidControllerTest {
                 .andReturn();
 
     }
-
-
 
 }
