@@ -116,12 +116,13 @@ public class VehicleController {
     }
     /**
      * Maps PUT Method to updating and persisting the Vehicle that matches the request body.
-     * @param v Vehicle object interpreted from request body.
+     * @param vDto VehicleDTO object interpreted from request body.
      * @return Updated ResponseEntity<String>.
      */
     @PutMapping
     public @ResponseBody
-    ResponseEntity<String> updateVehicle(@RequestBody Vehicle v) throws JsonProcessingException {
+    ResponseEntity<String> updateVehicle(@RequestBody VehicleDTO vDto) throws JsonProcessingException {
+        Vehicle v = vDto.convertToEntity(userService, modelService, saleService);
         try{
             if(vehicleService.getVehicleByVehicleId(v.getVehicle_id()) == null){
                 logger.info("Attempted to update a vehicle that was not present in the database.");
