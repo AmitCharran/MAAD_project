@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
+@CrossOrigin
 @RequestMapping("makes")
 public class MakeController {
     private final MakeService makeService;

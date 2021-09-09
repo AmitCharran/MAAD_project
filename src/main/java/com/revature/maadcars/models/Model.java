@@ -34,7 +34,6 @@ public class Model {
     private List<Vehicle> vehicles;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "make_id", referencedColumnName = "make_id", nullable = false)
     private Make make;
 

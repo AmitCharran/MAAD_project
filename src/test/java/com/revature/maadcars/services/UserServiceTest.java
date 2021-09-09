@@ -111,4 +111,13 @@ class UserServiceTest {
             userService.saveUser(user);
         });
     }
+
+    @Test
+    void updateUser(){
+        user.setFirstName("New");
+        user.setLastName("Name");
+        when(userRepository.save(user)).thenReturn(user);
+        assertEquals(user, userService.updateUser(user));
+
+    }
 }

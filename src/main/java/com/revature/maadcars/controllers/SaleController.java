@@ -22,6 +22,7 @@ import java.util.List;
  * Controller implementation for the Sale Entity.
  */
 @Controller
+@CrossOrigin
 @RequestMapping("sales")
 public class SaleController {
     @Autowired
