@@ -29,7 +29,7 @@ public class BidDTO {
      * @return User Object or null (if id does not exists)
      */
     public User getUserObject(UserService userService){
-        return userService.getUserByUserId(user_id);
+        return userService.getUserByUserId(user);
     }
     /**
      * Returns the sale object by giving the sale_id
@@ -37,7 +37,7 @@ public class BidDTO {
      * @return Sale Object or null (if id does not exists)
      */
     public Sale getSaleObject(SaleService saleService){
-        return saleService.getSaleBySaleId(sale_id);
+        return saleService.getSaleBySaleId(sale);
     }
 
     /**
