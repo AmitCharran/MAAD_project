@@ -325,7 +325,7 @@ class VehicleControllerTest {
                 .header("user_id", "2"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists())
-                .andExpect(jsonPath("$.user_id").value("1"))
+                .andExpect(jsonPath("$.user.user_id").value("1"))
                 .andReturn();
         logger.trace("Test passed: transfer");
     }

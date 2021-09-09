@@ -165,13 +165,13 @@ public class VehicleController {
      */
     @PutMapping("/transfer/{vehicle_id}/to/{new_user_id}")
     public @ResponseBody
-    ResponseEntity<VehicleDTO> transfer(@PathVariable String vehicle_id,
+    ResponseEntity<Vehicle> transfer(@PathVariable String vehicle_id,
                                         @PathVariable String new_user_id,
                                         @RequestHeader(name = "user_id") String current_user_id){
         try {
             Vehicle vehicleWithNewOwner = vehicleService.transferVehicle(Integer.parseInt(vehicle_id), Integer.parseInt(current_user_id), Integer.parseInt(new_user_id));
-            VehicleDTO vehicleDTO = VehicleDTO.convertToDto(vehicleWithNewOwner);
-            return new ResponseEntity<>(vehicleDTO, HttpStatus.OK);
+            //VehicleDTO vehicleDTO = VehicleDTO.convertToDto(vehicleWithNewOwner);
+            return new ResponseEntity<>(vehicleWithNewOwner, HttpStatus.OK);
         } catch (IllegalAccessException e) {
             logger.warn(e.getMessage(), e);
             logger.trace(Arrays.toString(e.getStackTrace()));
