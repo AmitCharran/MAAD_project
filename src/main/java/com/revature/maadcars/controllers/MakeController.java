@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -54,6 +55,21 @@ public class MakeController {
     public @ResponseBody
     Make createMake(@RequestBody Make make){
         return makeService.saveMake(make);
+    }
+
+    /**
+     * Takes a make object and inserts it into our database
+     * @param makes Object of type Make
+     * @return The Make object that is saved
+     */
+    @PostMapping("/multiple")
+    public @ResponseBody
+    ResponseEntity<String> createMake(@RequestBody Make[] makes){
+        List<Make> results = new ArrayList<>();
+        for (Make m : makes) {
+            results.add(makeService.saveMake(m));
+        }
+        return ResponseEntity.ok().build();
     }
 
     /**
