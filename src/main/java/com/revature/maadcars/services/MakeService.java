@@ -29,7 +29,7 @@ public class MakeService {
      * @return return Make object otherwise RuntimeException
      */
     public Make getMakeByMakeId(Integer id){
-        return makeRepository.findById(id).orElseThrow(RuntimeException::new);
+        return makeRepository.findById(id).orElse(null);
     }
     /**
      * return a list of all objects in the table
