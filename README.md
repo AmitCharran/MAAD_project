@@ -1,5 +1,6 @@
 # Project 2- MAAD Group
 For Project 2, we have built a car management application, which allows users to register their vehicles, as well as post them for sale and buy other vehicles.
+The back-end api is located at http://maad4-env.eba-g6ebnqmt.us-east-1.elasticbeanstalk.com/ , and the front-end web application is located at http://s3-angular-bucket-test.s3-website-us-east-1.amazonaws.com/
 ## API
 The API is from NHTSA (National Highway Traffic Safety Administration). We will leverage the database to get information on vehicles (e.g. make/model/year) for the users to query cars during registration. https://vpic.nhtsa.dot.gov/api/
 ## User Stories
