@@ -29,7 +29,7 @@ public class ModelService {
      * @return return Model object otherwise RuntimeException
      */
     public Model getModelByModelId(Integer id){
-        return modelRepository.findById(id).orElseThrow(RuntimeException::new);
+        return modelRepository.findById(id).orElse(null);
     }
     /**
      * return a list of all objects in the table

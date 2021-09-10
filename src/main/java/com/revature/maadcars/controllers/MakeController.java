@@ -58,9 +58,9 @@ public class MakeController {
     }
 
     /**
-     * Takes a make object and inserts it into our database
-     * @param makes Object of type Make
-     * @return The Make object that is saved
+     * Takes an array of make objects and inserts it into our database
+     * @param makes Array of type Make
+     * @return OK Response
      */
     @PostMapping("/multiple")
     public @ResponseBody
