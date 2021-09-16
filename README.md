@@ -64,7 +64,7 @@ As a user, I can:
 - [ ] Apache Maven
 - [ ] PostGreSQL deployed on AWS RDS
 - [ ] Git SCM (on GitHub)
-- [ ] JUnit
+- [ ] JUnit 5
 - [ ] Spring 5
 - [ ] Angular
 ## Presentation
